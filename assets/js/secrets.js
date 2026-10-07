@@ -54,11 +54,12 @@
   function achieve(k) {
     if (has(k) || !ACH[k]) return false;
     found.push(k); store.set("ach", found);
+    document.dispatchEvent(new CustomEvent("hs:ach", { detail: k }));
     toast(`${tr("Секрет найден", "Сирр ёфт шуд", "Secret found")} · ${found.length}/${TOTAL}`, ACH[k].n, ACH[k].i);
     renderGauntlet();
     return true;
   }
-  window.HSecrets = { has, achieve };
+  window.HSecrets = { has, achieve, ACH, STONES, STONE_HINTS };
 
   /* ---------- перчатка в футере ---------- */
   function stonesGot() { return Object.keys(STONES).filter(has); }
@@ -258,7 +259,7 @@
     thanos: () => tr("Он неизбежен. А вот скидка — нет.", "Ӯ ногузир аст. Аммо тахфиф — не.", "He is inevitable. The discount is not."),
     hulk: () => ({ t: tr("ХАЛК КРУШИТЬ! …но не на детском празднике. Халк обнимать.", "ХАЛК МЕШИКАНАД! …аммо на дар ҷашни кӯдакон. Халк оғӯш мекунад.", "HULK SMASH! …but not at a kids’ party. Hulk hug."), c: "w" }),
     iamironman: () => { toggleStark(true); closeJarvis(); return tr("Я — Железный человек.", "Ман — Одами оҳанин.", "I am Iron Man."); },
-    reset: () => { found = []; store.set("ach", []); renderGauntlet(); $$(".stone.taken").forEach(s => s.classList.remove("taken")); return { t: tr("Прогресс сброшен.", "Пешрафт тоза шуд.", "Progress reset."), c: "w" }; },
+    reset: () => { found = []; store.set("ach", []); document.dispatchEvent(new CustomEvent("hs:ach", { detail: null })); renderGauntlet(); $$(".stone.taken").forEach(s => s.classList.remove("taken")); return { t: tr("Прогресс сброшен.", "Пешрафт тоза шуд.", "Progress reset."), c: "w" }; },
     promo: () => tr("Промокоды не выдаются. Их зарабатывают подвигами.", "Промокод дода намешавад. Онро бо корнамоӣ ба даст меоранд.", "Promo codes aren’t handed out. They are earned through heroics."),
     marvel: () => tr("Этот сайт — учебный проект и не связан с Marvel. Но мы фанаты.", "Ин сайт лоиҳаи таълимӣ аст ва ба Marvel алоқа надорад. Вале мо мухлисонем.", "This site is a student project, not affiliated with Marvel. But we are fans."),
     salom: () => tr("И вам салом!", "Ва алейкум ассалом!", "Salom to you too!"),
@@ -481,6 +482,22 @@
     setTimeout(() => g.remove(), 4000);
     achieve("web");
   }, true);
+
+  /* паутина на телефоне: долгое нажатие */
+  let lpT = null, lpX = 0, lpY = 0;
+  document.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) return;
+    lpX = e.touches[0].clientX; lpY = e.touches[0].clientY;
+    clearTimeout(lpT);
+    lpT = setTimeout(() => {
+      const ev = new MouseEvent("click", { clientX: lpX, clientY: lpY, shiftKey: true, bubbles: true, cancelable: true });
+      document.dispatchEvent(ev);
+    }, 650);
+  }, { passive: true });
+  ["touchmove", "touchend", "touchcancel"].forEach(t => document.addEventListener(t, e => {
+    if (t === "touchmove" && e.touches[0] && Math.hypot(e.touches[0].clientX - lpX, e.touches[0].clientY - lpY) < 10) return;
+    clearTimeout(lpT);
+  }, { passive: true }));
 
   /* ---------- щелчок Таноса ---------- */
   function snap() {

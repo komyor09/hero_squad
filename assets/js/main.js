@@ -43,7 +43,10 @@
   }
   document.addEventListener("keydown", e => { if (e.key === "Escape") { const m = $("#hs-modal"); m && m.classList.remove("open"); } });
 
-  window.HS = { store, toast, modal, $, $$, fmt };
+  /* событие для мини-помощника (миссии) */
+  function act(t, v) { document.dispatchEvent(new CustomEvent("hs:act", { detail: { t, v } })); }
+
+  window.HS = { store, toast, modal, $, $$, fmt, act };
 
   /* ---------- загрузчик (один раз за сессию) ---------- */
   const loader = $(".loader");
@@ -199,7 +202,7 @@
     observe();
     $$(".hcard", container).forEach(card => {
       card.addEventListener("click", e => {
-        if (e.target.closest(".flip-btn")) card.classList.toggle("flipped");
+        if (e.target.closest(".flip-btn")) { card.classList.toggle("flipped"); act("flip", card.dataset.id); }
       });
       // 3D-наклон за мышью
       card.addEventListener("mousemove", e => {
@@ -229,7 +232,7 @@
     $$(".filters button").forEach(b => b.addEventListener("click", () => {
       $$(".filters button").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
-      const f = b.dataset.f;
+      const f = b.dataset.f; act("filter", f);
       $$(".hcard", allGrid).forEach(c => c.classList.toggle("hidden-card", f !== "all" && c.dataset.role !== f));
     }));
   }
@@ -305,7 +308,7 @@
         promoMsg.textContent = tr("Этот код работает только после щелчка перчаткой.", "Ин код танҳо пас аз ширтоси дастпӯшак кор мекунад.", "This code only works after the Gauntlet snap.");
         return;
       }
-      if (PROMOS[code]) { promo = code; promoMsg.textContent = "✓ " + PROMOS[code].msg; }
+      if (PROMOS[code]) { promo = code; promoMsg.textContent = "✓ " + PROMOS[code].msg; act("promo", code); }
       else { promo = null; promoMsg.textContent = code ? tr("Такого кода нет даже в мультивселенной.", "Чунин код ҳатто дар мултиолам нест.", "No such code, not even in the multiverse.") : ""; }
       recalc();
     });
@@ -361,6 +364,7 @@
         <p>${tr(`${name}, ваша заявка улетела на хеликэрриер. Дежурный герой перезвонит в течение 15 минут, чтобы уточнить детали праздника ${d}.`, `${name}, дархости шумо ба хеликэрриер парвоз кард. Қаҳрамони навбатдор дар давоми 15 дақиқа занг мезанад, то тафсилоти ҷашни ${d}-ро аниқ кунад.`, `${name}, your request is on its way to the Helicarrier. The hero on duty will call you within 15 minutes to plan your party on ${d}.`)}</p>
         <button class="btn" data-close>${tr("Отлично!", "Олӣ!", "Awesome!")}</button>`);
       confetti();
+      act("book");
       form.reset();
       store.del("order");
     });
