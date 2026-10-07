@@ -156,8 +156,8 @@
   const fromW = tr("от", "аз", "from");
   function cardHTML(h) {
     const fig = h.cover
-      ? `<img class="fig cover" src="${IMG + h.img}" alt="${h.name}" loading="lazy">`
-      : `<img class="fig" src="${IMG + h.img}" alt="${h.name}" loading="lazy">`;
+      ? `<img class="fig cover" src="${IMG + h.img}" alt="${h.name}">`
+      : `<img class="fig" src="${IMG + h.img}" alt="${h.name}">`;
     const bars = h.stats.map(([k, v]) =>
       `<div class="bar-row"><span>${k}</span><span class="track"><i style="--v:${v}%"></i></span><b>${v}</b></div>`).join("");
     const extra = h.id === "widow" ? `<button class="stone" data-stone="mind" style="right:22px;bottom:84px" aria-label="?"></button>` : "";
@@ -252,7 +252,7 @@
       <label class="pick" style="--c1:${h.c1};--c2:${h.c2}">
         <input type="checkbox" name="hero" value="${h.id}" ${preset.includes(h.id) ? "checked" : ""}>
         <span class="box">
-          <span class="thumb"><img src="${IMG + h.img}" alt="" class="${h.cover ? "cover" : ""}" loading="lazy"></span>
+          <span class="thumb"><img src="${IMG + h.img}" alt="" class="${h.cover ? "cover" : ""}"></span>
           <span class="lbl">${h.name}<small>${h.price} ${perHour}</small></span>
         </span>
       </label>`).join("");
