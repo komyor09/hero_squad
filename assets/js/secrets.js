@@ -1,5 +1,5 @@
 /* =========================================================
-   СЕКРЕТНЫЙ ОТДЕЛ «Щ.И.Т.»  ·  пасхалки HERO SQUAD
+   СЕКРЕТНЫЙ ОТДЕЛ «Щ.И.Т.»  ·  пасхалки HERO SQUAD (RU / TJ / EN)
    ---------------------------------------------------------
    Список всех секретов (спойлер для препода):
    1–6  Камни бесконечности, спрятаны по разным страницам
@@ -17,44 +17,44 @@
 (function () {
   "use strict";
   const { store, toast, modal, $, $$ } = window.HS;
+  const ROOT = window.ROOT || "";
+  const LOC = { ru: "ru-RU", tg: "ru-RU", en: "en-US" }[window.LANG] || "ru-RU";
 
   /* ---------- реестр достижений ---------- */
   const ACH = {
-    space:   { n: "Камень Пространства", i: "◆" },
-    mind:    { n: "Камень Разума", i: "◆" },
-    reality: { n: "Камень Реальности", i: "◆" },
-    power:   { n: "Камень Силы", i: "◆" },
-    time:    { n: "Камень Времени", i: "◆" },
-    soul:    { n: "Камень Души", i: "◆" },
-    snap:    { n: "Щелчок перчаткой", i: "✋" },
-    jarvis:  { n: "Привет, J.A.R.V.I.S.", i: "⌘" },
-    stark:   { n: "Зрение Старка", i: "◎" },
-    deadpool:{ n: "Четвёртая стена сломана", i: "✖" },
+    space:   { n: tr("Камень Пространства", "Санги Фазо", "Space Stone"), i: "◆" },
+    mind:    { n: tr("Камень Разума", "Санги Ақл", "Mind Stone"), i: "◆" },
+    reality: { n: tr("Камень Реальности", "Санги Воқеият", "Reality Stone"), i: "◆" },
+    power:   { n: tr("Камень Силы", "Санги Қудрат", "Power Stone"), i: "◆" },
+    time:    { n: tr("Камень Времени", "Санги Вақт", "Time Stone"), i: "◆" },
+    soul:    { n: tr("Камень Души", "Санги Рӯҳ", "Soul Stone"), i: "◆" },
+    snap:    { n: tr("Щелчок перчаткой", "Ширтоси дастпӯшак", "The Snap"), i: "✋" },
+    jarvis:  { n: tr("Привет, J.A.R.V.I.S.", "Салом, J.A.R.V.I.S.", "Hello, J.A.R.V.I.S."), i: "⌘" },
+    stark:   { n: tr("Зрение Старка", "Чашми Старк", "Stark Vision"), i: "◎" },
+    deadpool:{ n: tr("Четвёртая стена сломана", "Девори чорум шикаст", "Fourth wall broken"), i: "✖" },
     claws:   { n: "SNIKT!", i: "⚔" },
-    web:     { n: "Паутиной по сайту", i: "✳" },
-    dormammu:{ n: "Сделка с Дормамму", i: "∞" },
-    wakanda: { n: "Ваканда навсегда", i: "✦" },
-    console: { n: "Хакер из Щ.И.Т.а", i: ">_" },
-    lost:    { n: "Потерялся в мультивселенной", i: "?" }
+    web:     { n: tr("Паутиной по сайту", "Тор ба сайт", "Web-slinger"), i: "✳" },
+    dormammu:{ n: tr("Сделка с Дормамму", "Созиш бо Дормамму", "Deal with Dormammu"), i: "∞" },
+    wakanda: { n: tr("Ваканда навсегда", "Ваканда то абад", "Wakanda Forever"), i: "✦" },
+    console: { n: tr("Хакер из Щ.И.Т.а", "Хакери S.H.I.E.L.D.", "S.H.I.E.L.D. hacker"), i: ">_" },
+    lost:    { n: tr("Потерялся в мультивселенной", "Дар мултиолам гум шуд", "Lost in the multiverse"), i: "?" }
   };
-  const STONES = {
-    space: "#3b82ff", mind: "#ffd400", reality: "#ff2b2b",
-    power: "#a64dff", time: "#22e07a", soul: "#ff8a00"
-  };
+  const STONES = { space: "#3b82ff", mind: "#ffd400", reality: "#ff2b2b", power: "#a64dff", time: "#22e07a", soul: "#ff8a00" };
   const STONE_HINTS = {
-    space: "Там, где начинается праздник — рядом с первым героем главной.",
-    mind: "На обороте карточки самой хитрой шпионки.",
-    reality: "Появится, когда праздник станет по-настоящему большим (от 4 000 сомони).",
-    power: "Спроси команду, что будет, если на праздник придёт Танос.",
-    time: "У Доктора Стрэнджа ответ висит прямо на груди.",
-    soul: "Вормир. Спроси того, кто всегда на связи."
+    space: tr("Там, где начинается праздник — рядом с первым героем главной.", "Дар ҷое, ки ҷашн оғоз мешавад — назди қаҳрамони аввали саҳифаи асосӣ.", "Where the party begins — next to the first hero on the home page."),
+    mind: tr("На обороте карточки самой хитрой шпионки.", "Дар пушти корти ҷосуси аз ҳама зирак.", "On the back of the cleverest spy’s card."),
+    reality: tr("Появится, когда праздник станет по-настоящему большим (от 4 000 сомони).", "Вақте пайдо мешавад, ки ҷашн воқеан калон шавад (аз 4 000 сомонӣ).", "Appears when the party gets really big (4,000 TJS and up)."),
+    power: tr("Спроси команду, что будет, если на праздник придёт Танос.", "Аз даста пурс: агар Танос ба ҷашн ояд, чӣ мешавад?", "Ask the team what happens if Thanos shows up."),
+    time: tr("У Доктора Стрэнджа ответ висит прямо на груди.", "Ҷавоб дар синаи Доктор Стрэндж овезон аст.", "Doctor Strange wears the answer on his chest."),
+    soul: tr("Вормир. Спроси того, кто всегда на связи.", "Вормир. Аз касе пурс, ки ҳамеша дар тамос аст.", "Vormir. Ask the one who’s always online.")
   };
+  const TOTAL = Object.keys(ACH).length;
   let found = store.get("ach", []);
   const has = k => found.includes(k);
   function achieve(k) {
     if (has(k) || !ACH[k]) return false;
     found.push(k); store.set("ach", found);
-    toast(`Секрет найден · ${found.length}/${Object.keys(ACH).length}`, ACH[k].n, ACH[k].i);
+    toast(`${tr("Секрет найден", "Сирр ёфт шуд", "Secret found")} · ${found.length}/${TOTAL}`, ACH[k].n, ACH[k].i);
     renderGauntlet();
     return true;
   }
@@ -68,15 +68,17 @@
     $(".slots", g).innerHTML = Object.entries(STONES).map(([k, c]) => `<i class="slot ${has(k) ? "got" : ""}" style="--sc:${c}"></i>`).join("");
     const n = stonesGot().length;
     g.classList.toggle("full", n === 6);
-    $("small", g).textContent = n === 6 ? "Все камни собраны. Щёлкни!" : `Камней: ${n}/6 · секретов: ${found.length}/${Object.keys(ACH).length}`;
+    $("small", g).textContent = n === 6
+      ? tr("Все камни собраны. Щёлкни!", "Ҳамаи сангҳо ҷамъ шуданд. Ширтос зан!", "All stones collected. Snap!")
+      : `${tr("Камней", "Сангҳо", "Stones")}: ${n}/6 · ${tr("секретов", "сирҳо", "secrets")}: ${found.length}/${TOTAL}`;
   }
   renderGauntlet();
   const gauntlet = $(".gauntlet");
   gauntlet && gauntlet.addEventListener("click", () => {
     if (stonesGot().length === 6) return snap();
     modal(`
-      <h3>Перчатка бесконечности</h3>
-      <p>Шесть камней спрятаны на страницах сайта. Подсказки:</p>
+      <h3>${tr("Перчатка бесконечности", "Дастпӯшаки беохирӣ", "Infinity Gauntlet")}</h3>
+      <p>${tr("Шесть камней спрятаны на страницах сайта. Подсказки:", "Шаш санг дар саҳифаҳои сайт пинҳон шудаанд. Маслиҳатҳо:", "Six stones are hidden across the site. Hints:")}</p>
       <div style="text-align:left;display:grid;gap:10px;margin:18px 0">
         ${Object.entries(STONES).map(([k, c]) => `
           <div style="display:flex;gap:12px;align-items:flex-start;opacity:${has(k) ? 0.45 : 1}">
@@ -84,8 +86,8 @@
             <span><b>${ACH[k].n}</b>${has(k) ? " ✓" : ""}<br><small style="color:#9b9aad">${STONE_HINTS[k]}</small></span>
           </div>`).join("")}
       </div>
-      <p style="font-size:13px">Паучье чутьё подскажет, когда камень рядом.</p>
-      <button class="btn" data-close>Искать!</button>`);
+      <p style="font-size:13px">${tr("Паучье чутьё подскажет, когда камень рядом.", "Ҳисси тортанак мегӯяд, ки санг наздик аст.", "Your spider-sense will tingle when a stone is near.")}</p>
+      <button class="btn" data-close>${tr("Искать!", "Ҷустуҷӯ!", "Let’s hunt!")}</button>`);
   });
 
   /* ---------- камни на странице ---------- */
@@ -105,7 +107,8 @@
     setTimeout(() => fly.remove(), 1100);
     btn.classList.add("taken");
     achieve(k);
-    if (stonesGot().length === 6) setTimeout(() => toast("Перчатка заряжена", "Все 6 камней! Щёлкни перчаткой в подвале сайта", "✋", 6000), 1200);
+    if (stonesGot().length === 6) setTimeout(() => toast(tr("Перчатка заряжена", "Дастпӯшак пур шуд", "Gauntlet charged"),
+      tr("Все 6 камней! Щёлкни перчаткой в подвале сайта", "Ҳамаи 6 санг! Дастпӯшакро дар поёни сайт пахш кун", "All 6 stones! Click the gauntlet in the footer"), "✋", 6000), 1200);
   }
   function bindStones(root = document) {
     $$(".stone", root).forEach(b => {
@@ -138,7 +141,7 @@
     s.className = "stone"; s.dataset.stone = "time"; s.setAttribute("aria-label", "?");
     s.style.cssText = `left:${eye.offsetLeft + 10}px;top:${eye.offsetTop - 30}px;opacity:1;transform:scale(1.6)`;
     eye.parentElement.appendChild(s);
-    toast("Око Агамотто", "Оно открылось… что-то зелёное блеснуло", "◉");
+    toast(tr("Око Агамотто", "Чашми Агамотто", "Eye of Agamotto"), tr("Оно открылось… что-то зелёное блеснуло", "Он кушода шуд… чизе сабз дурахшид", "It opened… something green glinted"), "◉");
   });
 
   /* ---------- паучье чутьё ---------- */
@@ -153,8 +156,7 @@
     $$(".stone:not(.taken)").forEach(s => {
       const r = s.getBoundingClientRect();
       if (!r.width) return;
-      const d = Math.hypot(r.left + r.width / 2 - e.clientX, r.top + r.height / 2 - e.clientY);
-      if (d < 140) near = true;
+      if (Math.hypot(r.left + r.width / 2 - e.clientX, r.top + r.height / 2 - e.clientY) < 140) near = true;
     });
     sense.classList.toggle("on", near);
   });
@@ -184,9 +186,9 @@
   const jv = document.createElement("div");
   jv.className = "jarvis";
   jv.innerHTML = `
-    <div class="jarvis-head"><span class="dots"><i></i><i></i><i></i></span><span>J.A.R.V.I.S. · терминал Hero Squad</span><button aria-label="Закрыть">×</button></div>
+    <div class="jarvis-head"><span class="dots"><i></i><i></i><i></i></span><span>J.A.R.V.I.S. · ${tr("терминал Hero Squad", "терминали Hero Squad", "Hero Squad terminal")}</span><button aria-label="×">×</button></div>
     <div class="jarvis-log" aria-live="polite"></div>
-    <div class="jarvis-in"><span>›</span><input type="text" spellcheck="false" autocomplete="off" aria-label="Команда для J.A.R.V.I.S."><span class="jarvis-wave"><i></i><i></i><i></i><i></i><i></i></span></div>`;
+    <div class="jarvis-in"><span>›</span><input type="text" spellcheck="false" autocomplete="off" aria-label="J.A.R.V.I.S."><span class="jarvis-wave"><i></i><i></i><i></i><i></i><i></i></span></div>`;
   document.body.appendChild(jv);
   const log = $(".jarvis-log", jv), jin = $("input", jv);
   $(".jarvis-head button", jv).addEventListener("click", closeJarvis);
@@ -203,9 +205,9 @@
     setTimeout(() => jin.focus(), 300);
     if (!log.children.length) {
       const h = new Date().getHours();
-      const hi = h < 6 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
-      say(`${hi}. Я J.A.R.V.I.S. — помощник команды Hero Squad.`);
-      say("Введите help, чтобы увидеть список команд.", "w", 200);
+      const hi = h < 6 ? tr("Доброй ночи", "Шаб ба хайр", "Good night") : h < 12 ? tr("Доброе утро", "Субҳ ба хайр", "Good morning") : h < 18 ? tr("Добрый день", "Рӯз ба хайр", "Good afternoon") : tr("Добрый вечер", "Шом ба хайр", "Good evening");
+      say(`${hi}. ${tr("Я J.A.R.V.I.S. — помощник команды Hero Squad.", "Ман J.A.R.V.I.S. — ёрдамчии дастаи Hero Squad.", "I am J.A.R.V.I.S., the Hero Squad assistant.")}`);
+      say(tr("Введите help, чтобы увидеть список команд.", "Барои дидани фармонҳо help нависед.", "Type help to see the list of commands."), "w", 200);
     }
     achieve("jarvis");
   }
@@ -213,52 +215,56 @@
   function toggleJarvis() { jv.classList.contains("open") ? closeJarvis() : openJarvis(); }
   window.HSecrets.openJarvis = openJarvis;
 
-  const PAGES = { home: "index.html", главная: "index.html", heroes: "heroes.html", герои: "heroes.html", services: "services.html", услуги: "services.html", about: "about.html", "о-нас": "about.html", contacts: "contacts.html", контакты: "contacts.html", "404": "404.html" };
+  const PAGES = { home: "index.html", heroes: "heroes.html", services: "services.html", about: "about.html", contacts: "contacts.html", "404": "404.html" };
 
   const CMDS = {
-    help: () => [
-      "Доступные команды:",
-      "  heroes        — список героев и цены",
-      "  go <страница> — перейти: home, heroes, services, about, contacts",
-      "  stark         — включить зрение Старка (инспектор HTML)",
-      "  stones        — где искать камни бесконечности",
-      "  secrets       — найденные секреты",
-      "  snap          — щёлкнуть перчаткой",
-      "  whoami · date · clear · exit",
-      "…а ещё есть команды, которых нет в списке. Как и положено секретам."
-    ],
-    heroes: () => (window.HEROES || []).map(h => `  ${h.name.padEnd(18, " ")} ${String(h.price).padStart(4)} смн/час  · ${h.ages}`),
+    help: () => tr(
+      ["Доступные команды:", "  heroes        — список героев и цены", "  go <страница> — перейти: home, heroes, services, about, contacts", "  stark         — зрение Старка (инспектор HTML)", "  stones        — где искать камни бесконечности", "  secrets       — найденные секреты", "  snap          — щёлкнуть перчаткой", "  lang ru|tj|en — сменить язык", "  whoami · date · clear · exit", "…а ещё есть команды, которых нет в списке. Как и положено секретам."],
+      ["Фармонҳои дастрас:", "  heroes        — рӯйхати қаҳрамонон ва нархҳо", "  go <саҳифа>   — гузариш: home, heroes, services, about, contacts", "  stark         — чашми Старк (инспектори HTML)", "  stones        — сангҳои беохириро аз куҷо ҷустан", "  secrets       — сирҳои ёфтшуда", "  snap          — ширтоси дастпӯшак", "  lang ru|tj|en — иваз кардани забон", "  whoami · date · clear · exit", "…ва фармонҳое ҳастанд, ки дар рӯйхат нестанд. Сир бояд сир бошад."],
+      ["Available commands:", "  heroes        — heroes and prices", "  go <page>     — navigate: home, heroes, services, about, contacts", "  stark         — Stark Vision (HTML inspector)", "  stones        — where to find the Infinity Stones", "  secrets       — secrets you’ve found", "  snap          — snap the gauntlet", "  lang ru|tj|en — switch language", "  whoami · date · clear · exit", "…and there are commands not on this list. Secrets should stay secret."]),
+    heroes: () => (window.HEROES || []).map(h => `  ${h.name.padEnd(18, " ")} ${String(h.price).padStart(4)} ${CUR}  · ${h.ages}`),
     stones: () => Object.keys(STONES).map(k => `${has(k) ? "[✓]" : "[ ]"} ${ACH[k].n}${has(k) ? "" : " — " + STONE_HINTS[k]}`),
     secrets: () => {
       const all = Object.keys(ACH);
-      return [`Найдено ${found.length} из ${all.length}:`, ...all.map(k => has(k) ? `  ✓ ${ACH[k].n}` : "  · ????????")];
+      return [`${tr("Найдено", "Ёфт шуд", "Found")} ${found.length} / ${all.length}:`, ...all.map(k => has(k) ? `  ✓ ${ACH[k].n}` : "  · ????????")];
     },
-    stark: () => { toggleStark(true); closeJarvis(); return "Зрение Старка активировано. Наведите на любой элемент. ESC — выход."; },
-    snap: () => { if (stonesGot().length < 6) return [`Недостаточно камней: ${stonesGot().length}/6.`, "Даже Танос сначала собирал коллекцию."]; closeJarvis(); snap(); return "Щёлк."; },
-    whoami: () => [`Гость. Уровень допуска: стажёр Мстителей.`, `Браузер: ${navigator.userAgent.split(" ").slice(-1)[0]}`, `Экран: ${screen.width}×${screen.height}. Секретов найдено: ${found.length}.`],
-    date: () => `Земля-616: ${new Date().toLocaleString("ru-RU")}`,
+    stark: () => { toggleStark(true); closeJarvis(); return tr("Зрение Старка активировано. ESC — выход.", "Чашми Старк фаъол шуд. ESC — баромад.", "Stark Vision online. ESC to exit."); },
+    snap: () => {
+      if (stonesGot().length < 6) return [`${tr("Недостаточно камней", "Сангҳо кам аст", "Not enough stones")}: ${stonesGot().length}/6.`, tr("Даже Танос сначала собирал коллекцию.", "Ҳатто Танос аввал коллексия ҷамъ мекард.", "Even Thanos had to collect them first.")];
+      closeJarvis(); snap(); return "*snap*";
+    },
+    whoami: () => [tr("Гость. Уровень допуска: стажёр Мстителей.", "Меҳмон. Сатҳи дастрасӣ: таҷрибаомӯзи Интиқомгирандагон.", "Guest. Clearance level: Avengers intern."), `${tr("Экран", "Экран", "Screen")}: ${screen.width}×${screen.height}. ${tr("Секретов", "Сирҳо", "Secrets")}: ${found.length}/${TOTAL}.`],
+    date: () => `Earth-616: ${new Date().toLocaleString(LOC)}`,
     clear: () => { log.innerHTML = ""; return null; },
     exit: () => { closeJarvis(); return null; },
-    vormir: () => { jvMode = "vormir"; return ["Вы на Вормире. Ветер. Скалы. Красный Череп смотрит на вас.", "«Чтобы получить камень, нужно отдать то, что любишь». Что вы отдадите?"]; },
+    vormir: () => { jvMode = "vormir"; return tr(
+      ["Вы на Вормире. Ветер. Скалы. Красный Череп смотрит на вас.", "«Чтобы получить камень, нужно отдать то, что любишь». Что вы отдадите?"],
+      ["Шумо дар Вормир ҳастед. Бод. Харсангҳо. Косахонаи Сурх ба шумо менигарад.", "«Барои гирифтани санг, бояд чизи азизро диҳӣ». Шумо чӣ медиҳед?"],
+      ["You are on Vormir. Wind. Cliffs. The Red Skull stares at you.", "“To get the stone, you must give up what you love.” What will you give?"]); },
     dormammu: () => { closeJarvis(); dormammu(); return null; },
-    wakanda: () => { wakanda(); return "Протокол «Ваканда» переключён."; },
+    wakanda: () => { wakanda(); return tr("Протокол «Ваканда» переключён.", "Протоколи «Ваканда» иваз шуд.", "Wakanda protocol toggled."); },
     snikt: () => { closeJarvis(); claws(); return null; },
     deadpool: () => { closeJarvis(); showDeadpool(true); return null; },
-    web: () => "Паучье чутьё подсказывает: зажмите Shift и кликните куда угодно.",
+    web: () => tr("Паучье чутьё подсказывает: зажмите Shift и кликните куда угодно.", "Ҳисси тортанак мегӯяд: Shift-ро пахш карда, ба ҳар ҷо клик кунед.", "Spider-sense says: hold Shift and click anywhere."),
     hack: async () => {
-      const lines = ["Подключение к серверу Щ.И.Т.а…", "Обход брандмауэра Ника Фьюри…", "Расшифровка: ██████░░░░ 61%", "Расшифровка: ██████████ 100%", "ДОСТУП ЗАПРЕЩЁН. Фьюри всё видел. Он всегда всё видит.  (•_•)"];
+      const lines = tr(
+        ["Подключение к серверу Щ.И.Т.а…", "Обход брандмауэра Ника Фьюри…", "Расшифровка: ██████░░░░ 61%", "Расшифровка: ██████████ 100%", "ДОСТУП ЗАПРЕЩЁН. Фьюри всё видел. Он всегда всё видит.  (•_•)"],
+        ["Пайвастшавӣ ба сервери S.H.I.E.L.D.…", "Гузаштан аз брандмауэри Ник Фюри…", "Рамзкушоӣ: ██████░░░░ 61%", "Рамзкушоӣ: ██████████ 100%", "ДАСТРАСӢ МАНЪ АСТ. Фюри ҳамаро дид. Ӯ ҳамеша мебинад.  (•_•)"],
+        ["Connecting to S.H.I.E.L.D. server…", "Bypassing Nick Fury’s firewall…", "Decrypting: ██████░░░░ 61%", "Decrypting: ██████████ 100%", "ACCESS DENIED. Fury saw everything. He always does.  (•_•)"]);
       for (let i = 0; i < lines.length; i++) await say(lines[i], i === 4 ? "e" : "g", 450);
       return null;
     },
-    sudo: () => ({ t: "Ник Фьюри не выдавал вам права администратора.", c: "e" }),
-    thanos: () => "Он неизбежен. А вот скидка — нет.",
-    hulk: () => ({ t: "ХАЛК КРУШИТЬ! …но не на детском празднике. Халк обнимать.", c: "w" }),
-    iamironman: () => { toggleStark(true); closeJarvis(); return "Я — Железный человек."; },
-    reset: () => { found = []; store.set("ach", []); renderGauntlet(); $$(".stone.taken").forEach(s => s.classList.remove("taken")); return { t: "Прогресс сброшен. Мультивселенная перезагружена.", c: "w" }; },
-    promo: () => "Промокоды не выдаются. Их зарабатывают подвигами.",
-    marvel: () => "Этот сайт — учебный проект и не связан с Marvel. Но мы фанаты.",
-    "42": () => "Это из другой вселенной."
+    sudo: () => ({ t: tr("Ник Фьюри не выдавал вам права администратора.", "Ник Фюри ба шумо ҳуқуқи администратор надодааст.", "Nick Fury did not grant you admin rights."), c: "e" }),
+    thanos: () => tr("Он неизбежен. А вот скидка — нет.", "Ӯ ногузир аст. Аммо тахфиф — не.", "He is inevitable. The discount is not."),
+    hulk: () => ({ t: tr("ХАЛК КРУШИТЬ! …но не на детском празднике. Халк обнимать.", "ХАЛК МЕШИКАНАД! …аммо на дар ҷашни кӯдакон. Халк оғӯш мекунад.", "HULK SMASH! …but not at a kids’ party. Hulk hug."), c: "w" }),
+    iamironman: () => { toggleStark(true); closeJarvis(); return tr("Я — Железный человек.", "Ман — Одами оҳанин.", "I am Iron Man."); },
+    reset: () => { found = []; store.set("ach", []); renderGauntlet(); $$(".stone.taken").forEach(s => s.classList.remove("taken")); return { t: tr("Прогресс сброшен.", "Пешрафт тоза шуд.", "Progress reset."), c: "w" }; },
+    promo: () => tr("Промокоды не выдаются. Их зарабатывают подвигами.", "Промокод дода намешавад. Онро бо корнамоӣ ба даст меоранд.", "Promo codes aren’t handed out. They are earned through heroics."),
+    marvel: () => tr("Этот сайт — учебный проект и не связан с Marvel. Но мы фанаты.", "Ин сайт лоиҳаи таълимӣ аст ва ба Marvel алоқа надорад. Вале мо мухлисонем.", "This site is a student project, not affiliated with Marvel. But we are fans."),
+    salom: () => tr("И вам салом!", "Ва алейкум ассалом!", "Salom to you too!"),
+    "42": () => tr("Это из другой вселенной.", "Ин аз олами дигар аст.", "Wrong universe.")
   };
+  CMDS.hello = CMDS.salom; CMDS.привет = CMDS.salom; CMDS.салом = CMDS.salom;
 
   async function run(raw) {
     const input = raw.trim();
@@ -267,22 +273,28 @@
     jvHist.push(input); jvIdx = jvHist.length;
     if (jvMode === "vormir") {
       jvMode = null;
-      await say(`Вы отдаёте: «${input}».`, "w", 300);
-      await say("Красный Череп кивает. Жертва засчитана… условно. Никто не пострадал, это детский сайт.", "s", 700);
-      if (!has("soul")) { await say("◆ Вы получили Камень Души.", "g", 600); achieve("soul"); }
-      else await say("Камень Души у вас уже есть.", "s", 400);
+      await say(`${tr("Вы отдаёте", "Шумо медиҳед", "You give up")}: «${input}».`, "w", 300);
+      await say(tr("Красный Череп кивает. Жертва засчитана… условно. Никто не пострадал, это детский сайт.", "Косахонаи Сурх сар ҷунбонд. Қурбонӣ қабул шуд… шартан. Ҳеҷ кас осеб надид, ин сайти кӯдакона аст.", "The Red Skull nods. Sacrifice accepted… symbolically. Nobody got hurt, this is a kids’ site."), "s", 700);
+      if (!has("soul")) { await say("◆ " + ACH.soul.n + " ✓", "g", 600); achieve("soul"); }
       return;
     }
     const [cmd, ...args] = input.toLowerCase().replace(/\s+/g, " ").split(" ");
-    const key = (cmd + args.join("")).replace(/[^a-zа-я0-9-]/g, "") in CMDS ? (cmd + args.join("")) : cmd;
+    const joined = cmd + args.join("");
+    const key = joined in CMDS ? joined : cmd;
     if (cmd === "go") {
       const url = PAGES[args[0]];
-      if (!url) return say("Неизвестная страница. Варианты: home, heroes, services, about, contacts", "e");
-      await say(`Прокладываю маршрут к ${url}…`, "s");
+      if (!url) return say(tr("Неизвестная страница. Варианты: home, heroes, services, about, contacts", "Саҳифаи номаълум. Вариантҳо: home, heroes, services, about, contacts", "Unknown page. Options: home, heroes, services, about, contacts"), "e");
+      await say(`→ ${url}…`, "s");
       return setTimeout(() => location.href = url, 500);
     }
+    if (cmd === "lang") {
+      const a = $(`.lang-switch a[data-lang="${args[0]}"]`);
+      if (!a) return say("lang ru | lang tj | lang en", "e");
+      await say("→ " + args[0].toUpperCase(), "s");
+      return setTimeout(() => location.href = a.href, 400);
+    }
     const fn = CMDS[key];
-    if (!fn) return say(`Команда «${cmd}» не распознана. Мистер Старк бы разобрался. Введите help.`, "e");
+    if (!fn) return say(tr(`Команда «${cmd}» не распознана. Мистер Старк бы разобрался. Введите help.`, `Фармони «${cmd}» шинохта нашуд. Ҷаноби Старк мефаҳмид. help нависед.`, `Command “${cmd}” not recognised. Mr. Stark would figure it out. Type help.`), "e");
     let out = await fn(args);
     if (out == null) return;
     if (typeof out === "object" && !Array.isArray(out)) return say(out.t, out.c);
@@ -301,10 +313,13 @@
   const hud = document.createElement("div");
   hud.className = "stark-hud";
   hud.innerHTML = `<i class="hud-corner tl"></i><i class="hud-corner tr"></i><i class="hud-corner bl"></i><i class="hud-corner br"></i>
-    <div class="hud-top">STARK VISION · MARK LXXXV<br><small>ESC — выход</small></div>
+    <div class="hud-top">STARK VISION · MARK LXXXV<br><small>ESC — ${tr("выход", "баромад", "exit")}</small></div>
     <div class="hud-side"></div><div class="hud-box"></div><div class="hud-tag"></div><div class="hud-reticle"></div>`;
   document.body.appendChild(hud);
   const hBox = $(".hud-box", hud), hTag = $(".hud-tag", hud), hRet = $(".hud-reticle", hud), hSide = $(".hud-side", hud);
+  const K = {
+    size: tr("размер", "андоза", "size"), font: tr("шрифт", "ҳуруф", "font"), color: tr("цвет", "ранг", "color"), kids: tr("детей", "фарзандон", "children")
+  };
   function toggleStark(on) {
     const root = document.documentElement;
     const val = on === undefined ? !root.classList.contains("stark") : on;
@@ -314,13 +329,14 @@
       let rules = 0;
       try { [...document.styleSheets].forEach(s => { try { rules += s.cssRules.length; } catch (e) {} }); } catch (e) {}
       hSide.innerHTML = [
-        "СКАН DOM ......... OK",
-        `ЭЛЕМЕНТОВ ........ ${document.querySelectorAll("*").length}`,
-        `CSS-ПРАВИЛ ....... ${rules || "засекречено"}`,
-        `ИЗОБРАЖЕНИЙ ...... ${document.images.length}`,
-        `ССЫЛОК ........... ${document.links.length}`,
-        `ЭКРАН ............ ${innerWidth}×${innerHeight}`,
-        "РЕАКТОР .......... 100%"
+        "DOM SCAN ......... OK",
+        `ELEMENTS ......... ${document.querySelectorAll("*").length}`,
+        `CSS RULES ........ ${rules || "classified"}`,
+        `IMAGES ........... ${document.images.length}`,
+        `LINKS ............ ${document.links.length}`,
+        `VIEWPORT ......... ${innerWidth}×${innerHeight}`,
+        `LANG ............. ${window.LANG.toUpperCase()}`,
+        "ARC REACTOR ...... 100%"
       ].join("<br>");
     }
   }
@@ -334,14 +350,13 @@
     const cs = getComputedStyle(el);
     const cls = [...el.classList].slice(0, 3).map(c => "." + c).join("");
     hTag.innerHTML = `<b>&lt;${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}${cls}&gt;</b><br>
-      <span class="k">размер:</span> ${Math.round(r.width)}×${Math.round(r.height)}px<br>
-      <span class="k">шрифт:</span> ${cs.fontFamily.split(",")[0].replace(/"/g, "")} ${cs.fontSize}<br>
-      <span class="k">цвет:</span> ${cs.color}<br>
-      <span class="k">display:</span> ${cs.display} · <span class="k">детей:</span> ${el.children.length}`;
-    const tx = Math.min(e.clientX + 24, innerWidth - 330), ty = Math.min(e.clientY + 24, innerHeight - 120);
-    hTag.style.left = tx + "px"; hTag.style.top = ty + "px";
+      <span class="k">${K.size}:</span> ${Math.round(r.width)}×${Math.round(r.height)}px<br>
+      <span class="k">${K.font}:</span> ${cs.fontFamily.split(",")[0].replace(/"/g, "")} ${cs.fontSize}<br>
+      <span class="k">${K.color}:</span> ${cs.color}<br>
+      <span class="k">display:</span> ${cs.display} · <span class="k">${K.kids}:</span> ${el.children.length}`;
+    hTag.style.left = Math.min(e.clientX + 24, innerWidth - 330) + "px";
+    hTag.style.top = Math.min(e.clientY + 24, innerHeight - 120) + "px";
   });
-  // тройной клик по логотипу
   let logoClicks = 0, logoT;
   $$(".logo").forEach(l => l.addEventListener("click", e => {
     logoClicks++; clearTimeout(logoT);
@@ -352,31 +367,33 @@
   /* ---------- Дэдпул ---------- */
   const dp = document.createElement("div");
   dp.className = "deadpool";
-  dp.innerHTML = `<img src="assets/img/deadpool.jpg" alt="Дэдпул выглядывает из-за края экрана"><div class="dp-bubble"><button class="dp-close" aria-label="Скрыть">×</button><span></span></div>`;
+  dp.innerHTML = `<img src="${ROOT}assets/img/deadpool.jpg" alt="Deadpool"><div class="dp-bubble"><button class="dp-close" aria-label="×">×</button><span></span></div>`;
   document.body.appendChild(dp);
-  let dpClicks = 0, dpShown = false, idleT, idleSec = 0, scrolls = 0;
+  let dpClicks = 0, dpShown = false, idleSec = 0, scrolls = 0;
   addEventListener("scroll", () => scrolls++, { passive: true });
   const pageName = document.body.dataset.page;
   const PAGE_LINES = {
-    home: "Это главная. А главный тут — я. Можешь не спорить.",
-    heroes: "Почему моя карточка не первая?! Требую пересмотра списка.",
-    services: "Видел цены? Бери меня. Я лучше Росомахи. И чище. Иногда.",
-    about: "«О нас»… А где страница «Обо мне»? Я подам жалобу.",
-    contacts: "Звони прямо сейчас. Я подожду. Я в этом углу живу.",
-    lost: "404? Я тоже не знаю, где мы. Но вид красивый."
+    home: tr("Это главная. А главный тут — я. Можешь не спорить.", "Ин саҳифаи асосӣ аст. Асосӣ дар ин ҷо — ман. Баҳс накун.", "This is the home page. And I’m the main character. Don’t argue."),
+    heroes: tr("Почему моя карточка не первая?! Требую пересмотра списка.", "Чаро корти ман аввал нест?! Рӯйхатро аз нав дида бароед!", "Why isn’t my card first?! I demand a recount."),
+    services: tr("Видел цены? Бери меня. Я лучше Росомахи. И чище. Иногда.", "Нархҳоро дидӣ? Маро гир. Ман аз Вулверин беҳтарам. Ва тозатар. Баъзан.", "Seen the prices? Pick me. I’m better than Wolverine. And cleaner. Sometimes."),
+    about: tr("«О нас»… А где страница «Обо мне»? Я подам жалобу.", "«Дар бораи мо»… Пас саҳифаи «Дар бораи ман» куҷост? Шикоят мекунам.", "“About us”… Where’s the “About me” page? I’m filing a complaint."),
+    contacts: tr("Звони прямо сейчас. Я подожду. Я в этом углу живу.", "Ҳозир занг зан. Ман интизор мешавам. Ман дар ҳамин гӯша зиндагӣ мекунам.", "Call now. I’ll wait. I live in this corner."),
+    lost: tr("404? Я тоже не знаю, где мы. Но вид красивый.", "404? Ман ҳам намедонам мо куҷоем. Аммо манзара зебо.", "404? I don’t know where we are either. Nice view though.")
   };
   function dpLine() {
     const t = new Date();
-    const hh = String(t.getHours()).padStart(2, "0"), mm = String(t.getMinutes()).padStart(2, "0");
+    const hm = t.toLocaleTimeString(LOC, { hour: "2-digit", minute: "2-digit" });
+    const night = t.getHours() >= 23 || t.getHours() < 6;
     const lines = [
-      PAGE_LINES[pageName] || "Привет. Да, я с тобой разговариваю.",
-      `Ты уже ${idleSec} секунд ничего не делаешь. Я засёк. Мне скучно.`,
-      `Прокруток страницы: ${scrolls}. Я считал. У меня много свободного времени.`,
-      "Препод, если вы это читаете — ставьте пятёрку. Я видел код, там даже комментарии есть!",
-      "Подсказка: камни бесконечности слегка светятся. Как моя карьера.",
-      "Нажми «ё» на клавиатуре. Только не говори, что это я сказал.",
-      (t.getHours() >= 23 || t.getHours() < 6) ? `Уже ${hh}:${mm}. Нормальные люди спят, а ты пасхалки ищешь.` : `Сейчас ${hh}:${mm}. Идеальное время, чтобы забронировать меня.`,
-      "Ещё раз ткнёшь — я сломаю этот сайт. Я серьёзно. Почти."
+      PAGE_LINES[pageName] || tr("Привет. Да, я с тобой разговариваю.", "Салом. Ҳа, бо ту гап мезанам.", "Hi. Yes, I’m talking to you."),
+      tr(`Ты уже ${idleSec} секунд ничего не делаешь. Я засёк. Мне скучно.`, `Ту ${idleSec} сония боз ҳеҷ кор намекунӣ. Ман ҳисоб кардам. Дилам танг шуд.`, `You’ve done nothing for ${idleSec} seconds. I counted. I’m bored.`),
+      tr(`Прокруток страницы: ${scrolls}. Я считал. У меня много свободного времени.`, `Саҳифаро ${scrolls} бор варақ задӣ. Ман ҳисоб кардам. Вақти холӣ бисёр дорам.`, `Page scrolls: ${scrolls}. I counted. I have a lot of free time.`),
+      tr("Препод, если вы это читаете — ставьте пятёрку. Я видел код, там даже комментарии есть!", "Муаллим, агар инро хонда истода бошед — 5 гузоред. Ман кодро дидам, ҳатто шарҳҳо доранд!", "Teacher, if you’re reading this — give an A. I’ve seen the code, it even has comments!"),
+      tr("Подсказка: камни бесконечности слегка светятся. Как моя карьера.", "Маслиҳат: сангҳои беохирӣ каме медурахшанд. Мисли карераи ман.", "Hint: the Infinity Stones glow a little. Like my career."),
+      tr("Нажми «ё» на клавиатуре. Только не говори, что это я сказал.", "Тугмаи «ё» (`)-ро пахш кун. Фақат нагӯ, ки ман гуфтам.", "Press the ` key. Just don’t tell anyone I told you."),
+      night ? tr(`Уже ${hm}. Нормальные люди спят, а ты пасхалки ищешь.`, `Соат ${hm}. Одамони муқаррарӣ хобанд, ту бошӣ сир меҷӯӣ.`, `It’s ${hm}. Normal people are asleep, and you’re hunting easter eggs.`)
+            : tr(`Сейчас ${hm}. Идеальное время, чтобы забронировать меня.`, `Ҳоло ${hm}. Вақти беҳтарин барои фармоиш додани ман.`, `It’s ${hm}. Perfect time to book me.`),
+      tr("Ещё раз ткнёшь — я сломаю этот сайт. Я серьёзно. Почти.", "Боз як бор занӣ — ин сайтро мешиканам. Ҷиддӣ. Қариб.", "Poke me again and I’ll break this site. I’m serious. Almost.")
     ];
     return lines[dpClicks % lines.length];
   }
@@ -392,11 +409,10 @@
     if (e.target.closest(".dp-close")) { e.stopPropagation(); return hideDeadpool(); }
     dpClicks++;
     achieve("deadpool");
-    if (dpClicks >= 8) { dpClicks = 0; breakSite(); return talk("Я ПРЕДУПРЕЖДАЛ! …ладно, сейчас всё вернётся. Наверное."); }
+    if (dpClicks >= 8) { dpClicks = 0; breakSite(); return talk(tr("Я ПРЕДУПРЕЖДАЛ! …ладно, сейчас всё вернётся. Наверное.", "МАН ОГОҲ КАРДА БУДАМ! …хуб, ҳозир ҳама бармегардад. Шояд.", "I WARNED YOU! …okay, it’ll all come back. Probably.")); }
     talk(dpLine());
   });
-  function resetIdle() { idleSec = 0; }
-  ["mousemove", "keydown", "scroll", "touchstart"].forEach(ev => addEventListener(ev, resetIdle, { passive: true }));
+  ["mousemove", "keydown", "scroll", "touchstart"].forEach(ev => addEventListener(ev, () => { idleSec = 0; }, { passive: true }));
   setInterval(() => { idleSec++; if (idleSec === 25) showDeadpool(); }, 1000);
 
   function breakSite() {
@@ -423,8 +439,7 @@
     const a = Math.random() * 0.6 - 0.3;
     const paths = [-1, 0, 1].map(i => {
       const off = i * 70;
-      const x1 = w * 0.15 + off, y1 = h * 0.1 + off * a, x2 = w * 0.85 + off, y2 = h * 0.9 + off * a;
-      return `M${x1} ${y1} Q ${w / 2 + off + 40} ${h / 2 - 60 + off} ${x2} ${y2}`;
+      return `M${w * 0.15 + off} ${h * 0.1 + off * a} Q ${w / 2 + off + 40} ${h / 2 - 60 + off} ${w * 0.85 + off} ${h * 0.9 + off * a}`;
     });
     const c = document.createElement("div");
     c.className = "claws";
@@ -449,12 +464,11 @@
     e.preventDefault();
     const x = e.clientX, y = e.clientY;
     const sx = x < innerWidth / 2 ? 0 : innerWidth, sy = innerHeight;
-    const NS = "http://www.w3.org/2000/svg";
-    const g = document.createElementNS(NS, "g");
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     let spokes = "", rings = "";
     for (let i = 0; i < 8; i++) {
-      const ang = i * Math.PI / 4 + 0.2, R = 42;
-      spokes += `<line x1="${x}" y1="${y}" x2="${x + Math.cos(ang) * R}" y2="${y + Math.sin(ang) * R}"/>`;
+      const ang = i * Math.PI / 4 + 0.2;
+      spokes += `<line x1="${x}" y1="${y}" x2="${x + Math.cos(ang) * 42}" y2="${y + Math.sin(ang) * 42}"/>`;
     }
     [14, 26, 38].forEach(R => {
       const pts = Array.from({ length: 8 }, (_, i) => { const ang = i * Math.PI / 4 + 0.2; return `${x + Math.cos(ang) * R},${y + Math.sin(ang) * R}`; }).join(" ");
@@ -505,13 +519,16 @@
     })();
 
     const msg = document.createElement("div"); msg.className = "snap-msg";
-    msg.innerHTML = `Мистер Старк, мне что-то нехорошо…<small>Половина сайта исчезла. Но не волнуйся — Халк уже щёлкает обратно.</small>`;
+    msg.innerHTML = tr(
+      `Мистер Старк, мне что-то нехорошо…<small>Половина сайта исчезла. Но не волнуйся — Халк уже щёлкает обратно.</small>`,
+      `Ҷаноби Старк, ҳоли ман хуб нест…<small>Нисфи сайт нопадид шуд. Хавотир нашав — Халк аллакай баргардонда истодааст.</small>`,
+      `Mr. Stark, I don’t feel so good…<small>Half the site is gone. Don’t worry — Hulk is already snapping it back.</small>`);
     setTimeout(() => document.body.appendChild(msg), 1200);
     setTimeout(() => msg.remove(), 5400);
     setTimeout(() => {
       victims.forEach(el => el.classList.remove("dusted"));
       const first = achieve("snap");
-      toast("Награда", "Промокод SNAP15 — скидка 15% в калькуляторе", "✋", 7000);
+      toast(tr("Награда", "Мукофот", "Reward"), tr("Промокод SNAP15 — скидка 15% в калькуляторе", "Промокоди SNAP15 — 15% тахфиф дар ҳисобкунак", "Promo code SNAP15 — 15% off in the calculator"), "✋", 7000);
       if (first) setTimeout(() => HS.confetti(), 300);
     }, 5600);
   }
@@ -526,12 +543,12 @@
     document.body.appendChild(L); root.classList.add("dormammu");
     const T = $(".dorm-text", L);
     const startY = scrollY;
+    const loop = tr("петля", "давр", "loop");
+    const ask = tr("Дормамму, я пришёл договориться.", "Дормамму, ман барои гуфтушунид омадам.", "Dormammu, I’ve come to bargain.");
     const steps = [
-      ["петля 1", "Дормамму, я пришёл договориться."],
-      ["петля 2", "Дормамму, я пришёл договориться."],
-      ["петля 3", "Дормамму, я пришёл договориться."],
-      ["петля 47", "Дормамму… я пришёл… договориться."],
-      ["сделка заключена", "Ладно! Держи промокод DORMAMMU10 — −10% на праздник. Только уходи."]
+      [loop + " 1", ask], [loop + " 2", ask], [loop + " 3", ask],
+      [loop + " 47", tr("Дормамму… я пришёл… договориться.", "Дормамму… ман… барои гуфтушунид… омадам.", "Dormammu… I’ve come… to bargain.")],
+      [tr("сделка заключена", "созиш баста шуд", "deal made"), tr("Ладно! Держи промокод DORMAMMU10 — −10% на праздник. Только уходи.", "Хуб! Ана промокоди DORMAMMU10 — −10% барои ҷашн. Фақат рав.", "Fine! Take promo code DORMAMMU10 — 10% off your party. Just leave.")]
     ];
     steps.forEach(([a, b], i) => setTimeout(() => {
       T.innerHTML = `<small>${a}</small>${b}`;
@@ -552,7 +569,7 @@
     root.classList.toggle("wakanda", on);
     store.set("wakanda", on);
     if (on && force === undefined) {
-      toast("Ваканда навсегда", "Вибраниум активирован. Кликай — почувствуешь кинетическую энергию. Промокод: WAKANDA7", "✦", 6500);
+      toast(ACH.wakanda.n, tr("Вибраниум активирован. Кликай — почувствуешь кинетическую энергию. Промокод: WAKANDA7", "Вибраниум фаъол шуд. Клик кун — энергияи кинетикиро ҳис мекунӣ. Промокод: WAKANDA7", "Vibranium activated. Click to feel the kinetic energy. Promo code: WAKANDA7"), "✦", 6500);
       achieve("wakanda");
     }
   }
@@ -567,30 +584,27 @@
   /* ---------- консоль разработчика ---------- */
   const big = "font:24px 'Russo One',Impact,sans-serif;color:#fff;background:linear-gradient(90deg,#0a1a6b 50%,#a10d13 50%);padding:10px 22px;border-radius:6px";
   console.log("%cHERO SQUAD", big);
-  console.log("%cАгент, вы открыли консоль. Щ.И.Т. это ценит.\nВведите %chero()%c и нажмите Enter.", "color:#9b9aad;font-size:13px", "color:#f5c518;font-weight:bold;font-size:13px", "color:#9b9aad;font-size:13px");
+  console.log("%c" + tr("Агент, вы открыли консоль. Щ.И.Т. это ценит.\nВведите ", "Агент, шумо консолро кушодед. S.H.I.E.L.D. инро қадр мекунад.\nНависед ", "Agent, you opened the console. S.H.I.E.L.D. appreciates that.\nType ") + "%chero()%c" + tr(" и нажмите Enter.", " ва Enter-ро пахш кунед.", " and press Enter."), "color:#9b9aad;font-size:13px", "color:#f5c518;font-weight:bold;font-size:13px", "color:#9b9aad;font-size:13px");
   window.hero = function () {
     achieve("console");
-    console.log("%c✓ Доступ подтверждён.", "color:#9cff6b;font-size:14px");
-    console.log("%cСекретные слова (просто набери их на странице):\n  jarvis · stark · snikt · wakanda · dormammu · deadpool\nИли нажми клавишу «ё».", "color:#6fe3ff;font-size:13px");
-    return "Добро пожаловать в Щ.И.Т., агент.";
+    console.log("%c✓ " + tr("Доступ подтверждён.", "Дастрасӣ тасдиқ шуд.", "Access granted."), "color:#9cff6b;font-size:14px");
+    console.log("%c" + tr("Секретные слова (просто набери их на странице):", "Калимаҳои махфӣ (дар саҳифа нависед):", "Secret words (just type them on the page):") + "\n  jarvis · stark · snikt · wakanda · dormammu · deadpool", "color:#6fe3ff;font-size:13px");
+    return tr("Добро пожаловать в Щ.И.Т., агент.", "Хуш омадед ба S.H.I.E.L.D., агент.", "Welcome to S.H.I.E.L.D., agent.");
   };
 
   /* ---------- вкладка браузера ---------- */
   const origTitle = document.title;
-  document.addEventListener("visibilitychange", () => {
-    document.title = document.hidden ? "Мистер Старк, вернитесь…" : origTitle;
-  });
+  const awayTitle = tr("Мистер Старк, вернитесь…", "Ҷаноби Старк, баргардед…", "Mr. Stark, come back…");
+  document.addEventListener("visibilitychange", () => { document.title = document.hidden ? awayTitle : origTitle; });
 
   /* ---------- 404 ---------- */
   const typed = $(".typed");
   if (typed) {
     achieve("lost");
-    const text = [
-      "ДУМ не признаёт ошибок.",
-      "Эта страница не потерялась — ДУМ её конфисковал.",
-      "Ищешь Камень Души? ДУМ слышал, что J.A.R.V.I.S. знает дорогу на Вормир…",
-      "А теперь — уходи. Пока ДУМ добрый."
-    ];
+    const text = tr(
+      ["ДУМ не признаёт ошибок.", "Эта страница не потерялась — ДУМ её конфисковал.", "Ищешь Камень Души? ДУМ слышал, что J.A.R.V.I.S. знает дорогу на Вормир…", "А теперь — уходи. Пока ДУМ добрый."],
+      ["ДУМ хаторо эътироф намекунад.", "Ин саҳифа гум нашудааст — ДУМ онро мусодира кард.", "Санги Рӯҳро меҷӯӣ? ДУМ шунидааст, ки J.A.R.V.I.S. роҳи Вормирро медонад…", "Акнун — рав. То ДУМ меҳрубон аст."],
+      ["DOOM does not make mistakes.", "This page isn’t lost — DOOM confiscated it.", "Looking for the Soul Stone? DOOM hears J.A.R.V.I.S. knows the way to Vormir…", "Now leave. While DOOM is still in a good mood."]);
     let li = 0, ci = 0;
     (function type() {
       if (li >= text.length) return;

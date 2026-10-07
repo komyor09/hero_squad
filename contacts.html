@@ -7,8 +7,7 @@
   |_| |_|_____|_| \_\\___/  |____/ \__\_\\___//_/   \_\____/
 
   Привет, человек, который смотрит исходный код!
-  На сайте спрятано 16 секретов. Вот бесплатная подсказка:
-  нажми клавишу «ё» (или `) — и поговори с J.A.R.V.I.S.
+  На сайте спрятано 16 секретов. Подсказка: нажми клавишу «ё» (или `).
 -->
 <html lang="ru">
 <head>
@@ -17,6 +16,9 @@
   <title>Контакты — Hero Squad</title>
   <meta name="description" content="Свяжитесь с нами и забронируйте героя на праздник.">
   <meta name="theme-color" content="#07070b">
+  <link rel="alternate" hreflang="ru" href="contacts.html">
+  <link rel="alternate" hreflang="tg" href="tj/contacts.html">
+  <link rel="alternate" hreflang="en" href="en/contacts.html">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 2 43 12v24L24 46 5 36V12z' fill='%23e62429'/%3E%3Cpath d='M27 9 15 27h8l-3 12 13-19h-8z' fill='%23fff'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,26 +26,27 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/secrets.css">
 </head>
-<body data-page="contacts">
+<body data-page="contacts" data-root="">
 
 <div class="progress"></div>
 
 <header class="header">
   <div class="container">
-    <a class="logo" href="index.html" aria-label="Hero Squad — на главную"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+    <a class="logo" href="index.html" aria-label="Hero Squad"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
   <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset=".5" stop-color="#1d3ed6"/><stop offset=".5" stop-color="#e62429"/></linearGradient></defs>
   <path d="M24 2 43 12v24L24 46 5 36V12z" fill="url(#lg)" stroke="#fff" stroke-width="2"/>
   <path d="M27 9 15 27h8l-3 12 13-19h-8z" fill="#fff"/>
 </svg><span>HERO SQUAD<small>ГЕРОИ НА ПРАЗДНИК</small></span></a>
-    <nav class="nav" aria-label="Основное меню"><a href="index.html" data-page="home">Главная</a><a href="heroes.html" data-page="heroes">Герои</a><a href="services.html" data-page="services">Услуги</a><a href="about.html" data-page="about">О нас</a><a href="contacts.html" data-page="contacts">Контакты</a></nav>
+    <nav class="nav" aria-label="Основное меню"><a href="index.html" data-page="home">Главная</a><a href="heroes.html" data-page="heroes">Герои</a><a href="services.html" data-page="services">Услуги</a><a href="about.html" data-page="about">О нас</a><a href="contacts.html" data-page="contacts">Контакты</a><div class="lang-switch mobile-only"><a href="contacts.html" data-lang="ru" hreflang="ru" class="on">RU</a><a href="tj/contacts.html" data-lang="tj" hreflang="tg" class="">TJ</a><a href="en/contacts.html" data-lang="en" hreflang="en" class="">EN</a></div></nav>
     <div class="header-cta">
+      <div class="lang-switch" aria-label="Язык"><a href="contacts.html" data-lang="ru" hreflang="ru" class="on">RU</a><a href="tj/contacts.html" data-lang="tj" hreflang="tg" class="">TJ</a><a href="en/contacts.html" data-lang="en" hreflang="en" class="">EN</a></div>
       <a class="btn" href="contacts.html#book">Забронировать</a>
       <button class="burger" aria-label="Открыть меню"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
-<aside class="side-rail" aria-label="Соцсети">
+<aside class="side-rail" aria-label="Social">
   <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
   <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.3 2.9 11.5c-1.3.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.3-1.5zM8.8 14l9.4-6-7.3 6.9-.3 3.2z"/></svg></a>
   <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.6-4.6A8.5 8.5 0 1 1 8 19.6z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.4-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z" fill="currentColor" stroke="none"/></svg></a>
@@ -77,9 +80,7 @@
       <div class="map-card reveal">
         <svg viewBox="0 0 600 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <rect width="600" height="260" fill="#0d1020"/>
-          <g stroke="#1b2140" stroke-width="10" fill="none">
-            <path d="M0 60h600M0 150h600M0 220h600M80 0v260M210 0v260M360 0v260M500 0v260"/>
-          </g>
+          <g stroke="#1b2140" stroke-width="10" fill="none"><path d="M0 60h600M0 150h600M0 220h600M80 0v260M210 0v260M360 0v260M500 0v260"/></g>
           <g stroke="#262e57" stroke-width="3" fill="none"><path d="M0 105h600M0 190h600M140 0v260M290 0v260M430 0v260"/></g>
           <path d="M-10 120C100 90 160 150 260 125S420 70 610 100" stroke="#1d3ed6" stroke-width="22" fill="none" opacity=".55"/>
           <text x="440" y="88" fill="#4d64d8" font-size="11" font-family="Oswald" letter-spacing="3">СЫРДАРЬЯ</text>
@@ -129,7 +130,7 @@
   <path d="M27 9 15 27h8l-3 12 13-19h-8z" fill="#fff"/>
 </svg><span>HERO SQUAD<small>ГЕРОИ НА ПРАЗДНИК</small></span></a>
         <p>Аниматоры в костюмах любимых героев на дни рождения, выпускные и семейные праздники. Худжанд и Душанбе.</p>
-        <div class="gauntlet" role="button" tabindex="0" aria-label="Перчатка с камнями">
+        <div class="gauntlet" role="button" tabindex="0" aria-label="Infinity Gauntlet">
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 44V24l-3-8c-.6-1.8 1.8-2.8 2.8-1.2L17 20V7c0-2 3-2 3 0v11-13c0-2 3-2 3 0v13-11c0-2 3-2 3 0v12-9c0-2 3-2 3 0v17c3-3 6-4 7-2s-4 6-6 10l-3 7z" fill="#c9a227" stroke="#f5c518" stroke-width="1.2"/><circle cx="24" cy="31" r="2.6" fill="#ff8a00"/></svg>
           <div><b>Перчатка</b><div class="slots"></div><small></small></div>
         </div>
@@ -155,7 +156,7 @@
           <li>Ежедневно 9:00–21:00</li>
         </ul>
         <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
-          <button class="arc" aria-label="Дуговой реактор"></button>
+          <button class="arc" aria-label="Arc reactor"></button>
           <small style="color:var(--muted)">Не трогай реактор.</small>
         </div>
       </div>

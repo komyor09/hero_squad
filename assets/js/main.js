@@ -12,8 +12,9 @@
   };
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const IMG = "assets/img/";
-  const fmt = n => n.toLocaleString("ru-RU");
+  const IMG = (window.ROOT || "") + "assets/img/";
+  const LOC = { ru: "ru-RU", tg: "ru-RU", en: "en-US" }[window.LANG] || "ru-RU";
+  const fmt = n => n.toLocaleString(LOC);
 
   /* ---------- тосты ---------- */
   function toast(title, text, icon = "★", ms = 4200) {
@@ -150,15 +151,17 @@
   }
 
   /* ---------- карточки героев ---------- */
-  const roleName = { hero: "Герой", villain: "Злодей", anti: "Антигерой" };
+  const roleName = { hero: tr("Герой", "Қаҳрамон", "Hero"), villain: tr("Злодей", "Бадкирдор", "Villain"), anti: tr("Антигерой", "Зидди қаҳрамон", "Antihero") };
+  const perHour = tr("смн/час", "смн/соат", "TJS/h");
+  const fromW = tr("от", "аз", "from");
   function cardHTML(h) {
     const fig = h.cover
       ? `<img class="fig cover" src="${IMG + h.img}" alt="${h.name}" loading="lazy">`
       : `<img class="fig" src="${IMG + h.img}" alt="${h.name}" loading="lazy">`;
-    const bars = Object.entries(h.stats).map(([k, v]) =>
+    const bars = h.stats.map(([k, v]) =>
       `<div class="bar-row"><span>${k}</span><span class="track"><i style="--v:${v}%"></i></span><b>${v}</b></div>`).join("");
     const extra = h.id === "widow" ? `<button class="stone" data-stone="mind" style="right:22px;bottom:84px" aria-label="?"></button>` : "";
-    const tip = h.id === "spider" ? `<p class="secret-hint">// совет паучка: Shift + клик</p>` : "";
+    const tip = h.id === "spider" ? `<p class="secret-hint">// ${tr("совет паучка: Shift + клик", "маслиҳати тортанак: Shift + клик", "spidey tip: Shift + click")}</p>` : "";
     return `
     <article class="hcard reveal" data-role="${h.role}" data-id="${h.id}" style="--c1:${h.c1};--c2:${h.c2}">
       <div class="hcard-inner">
@@ -167,22 +170,22 @@
           <div class="big-name">${h.en}</div>
           ${fig}
           <div class="meta">
-            <div><h3>${h.name}</h3><small>${h.ages} · от ${h.price} смн/час</small></div>
-            <button class="flip-btn" aria-label="Подробнее о герое">
+            <div><h3>${h.name}</h3><small>${h.ages} · ${fromW} ${h.price} ${perHour}</small></div>
+            <button class="flip-btn" aria-label="${tr("Подробнее о герое", "Маълумоти бештар", "More about the hero")}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>
             </button>
           </div>
         </div>
         <div class="hcard-face hcard-back">
-          <button class="close flip-btn" aria-label="Назад">✕</button>
+          <button class="close flip-btn" aria-label="${tr("Назад", "Бозгашт", "Back")}">✕</button>
           <span class="role">${roleName[h.role]} · ${h.ages}</span>
           <h3>${h.name}</h3>
           <p>${h.desc}</p>
           <div class="bars">${bars}</div>
           ${tip}
           <div class="bottom">
-            <div class="price">${h.price}<small> смн/час</small></div>
-            <a class="btn" href="services.html#calc" data-invite="${h.id}">Позвать</a>
+            <div class="price">${h.price}<small> ${perHour}</small></div>
+            <a class="btn" href="services.html#calc" data-invite="${h.id}">${tr("Позвать", "Даъват", "Invite")}</a>
           </div>
           ${extra}
         </div>
@@ -250,7 +253,7 @@
         <input type="checkbox" name="hero" value="${h.id}" ${preset.includes(h.id) ? "checked" : ""}>
         <span class="box">
           <span class="thumb"><img src="${IMG + h.img}" alt="" class="${h.cover ? "cover" : ""}" loading="lazy"></span>
-          <span class="lbl">${h.name}<small>${h.price} смн/час</small></span>
+          <span class="lbl">${h.name}<small>${h.price} ${perHour}</small></span>
         </span>
       </label>`).join("");
     if (!preset.length) $("input[value=spider]", picks).checked = true;
@@ -260,12 +263,13 @@
       `<label class="chip"><input type="checkbox" name="extra" value="${x.id}"><span>${x.name} · ${x.price}</span></label>`).join("");
 
     const hours = $("#hours"), kids = $("#kids");
+    const H = tr("ч", "соат", "h");
     const promoIn = $("#promo"), promoMsg = $(".promo-msg");
     let promo = null;
     const PROMOS = {
-      DORMAMMU10: { off: 0.10, msg: "Дормамму согласился: −10%" },
-      WAKANDA7: { off: 0.07, msg: "Вибраниевая скидка: −7%" },
-      SNAP15: { off: 0.15, msg: "Половина цены исчезла… почти. −15%" }
+      DORMAMMU10: { off: 0.10, msg: tr("Дормамму согласился: −10%", "Дормамму розӣ шуд: −10%", "Dormammu agreed: −10%") },
+      WAKANDA7: { off: 0.07, msg: tr("Вибраниевая скидка: −7%", "Тахфифи вибраниумӣ: −7%", "Vibranium discount: −7%") },
+      SNAP15: { off: 0.15, msg: tr("Половина цены исчезла… почти. −15%", "Нисфи нарх нопадид шуд… қариб. −15%", "Half the price vanished… almost. −15%") }
     };
 
     function fill(r) { const p = (r.value - r.min) / (r.max - r.min) * 100; r.style.setProperty("--fill", p + "%"); }
@@ -274,7 +278,7 @@
       const chosen = $$("input[name=hero]:checked", calc).map(i => HEROES.find(h => h.id === i.value));
       const ex = $$("input[name=extra]:checked", calc).map(i => EXTRAS.find(x => x.id === i.value));
       const hr = +hours.value, kd = +kids.value;
-      $("#hours-out").textContent = hr + " ч";
+      $("#hours-out").textContent = hr + " " + H;
       $("#kids-out").textContent = kd;
       fill(hours); fill(kids);
 
@@ -282,27 +286,27 @@
       const kidsExtra = Math.max(0, kd - 10) * 15;
       const exSum = ex.reduce((s, x) => s + x.price, 0);
       let total = heroSum + kidsExtra + exSum;
-      let lines = chosen.map(h => [`${h.name} × ${hr} ч`, h.price * hr]);
-      if (kidsExtra) lines.push([`Гостей больше 10 (+${kd - 10})`, kidsExtra]);
+      let lines = chosen.map(h => [`${h.name} × ${hr} ${H}`, h.price * hr]);
+      if (kidsExtra) lines.push([tr(`Гостей больше 10 (+${kd - 10})`, `Меҳмонон зиёда аз 10 (+${kd - 10})`, `Over 10 guests (+${kd - 10})`), kidsExtra]);
       ex.forEach(x => lines.push([x.name, x.price]));
-      if (promo) { const d = Math.round(total * PROMOS[promo].off); lines.push([`Промокод ${promo}`, -d]); total -= d; }
-      if (!lines.length) lines.push(["Выберите хотя бы одного героя", 0]);
+      if (promo) { const d = Math.round(total * PROMOS[promo].off); lines.push([`${tr("Промокод", "Промокод", "Promo code")} ${promo}`, -d]); total -= d; }
+      if (!lines.length) lines.push([tr("Выберите хотя бы одного героя", "Ақаллан як қаҳрамонро интихоб кунед", "Pick at least one hero"), 0]);
 
       $("#sum-lines").innerHTML = lines.map(([a, b]) => `<div class="line-item"><span>${a}</span><b>${b < 0 ? "−" + fmt(-b) : fmt(b)}</b></div>`).join("");
-      $("#sum-total").innerHTML = `${fmt(total)} <small>сомони</small>`;
+      $("#sum-total").innerHTML = `${fmt(total)} <small>${CUR_LONG}</small>`;
       calc.dataset.total = total;
-      store.set("order", { heroes: chosen.map(h => h.name), hours: hr, kids: kd, extras: ex.map(x => x.name), total, promo });
+      store.set("order", { heroes: chosen.map(h => h.id), hours: hr, kids: kd, extras: ex.map(x => x.id), total, promo });
       document.dispatchEvent(new CustomEvent("hs:total", { detail: total }));
     }
     calc.addEventListener("input", recalc);
     $("#promo-btn").addEventListener("click", () => {
       const code = promoIn.value.trim().toUpperCase();
       if (code === "SNAP15" && !(window.HSecrets && HSecrets.has("snap"))) {
-        promoMsg.textContent = "Этот код работает только после щелчка перчаткой.";
+        promoMsg.textContent = tr("Этот код работает только после щелчка перчаткой.", "Ин код танҳо пас аз ширтоси дастпӯшак кор мекунад.", "This code only works after the Gauntlet snap.");
         return;
       }
       if (PROMOS[code]) { promo = code; promoMsg.textContent = "✓ " + PROMOS[code].msg; }
-      else { promo = null; promoMsg.textContent = code ? "Такого кода нет даже в мультивселенной." : ""; }
+      else { promo = null; promoMsg.textContent = code ? tr("Такого кода нет даже в мультивселенной.", "Чунин код ҳатто дар мултиолам нест.", "No such code, not even in the multiverse.") : ""; }
       recalc();
     });
     recalc();
@@ -314,13 +318,18 @@
   const form = $("#book-form");
   if (form) {
     const order = store.get("order", null);
+    const hName = id => (HEROES.find(h => h.id === id) || {}).name;
+    const xName = id => (EXTRAS.find(x => x.id === id) || {}).name;
     if (order && order.heroes && order.heroes.length) {
-      $("#f-msg").value = `Хочу: ${order.heroes.join(", ")}; ${order.hours} ч; гостей: ${order.kids}` +
-        (order.extras.length ? `; доп.: ${order.extras.join(", ")}` : "") + `. Расчёт: ${fmt(order.total)} смн.`;
+      const hn = order.heroes.map(hName).filter(Boolean), xn = (order.extras || []).map(xName).filter(Boolean);
+      $("#f-msg").value = tr(
+        `Хочу: ${hn.join(", ")}; ${order.hours} ч; гостей: ${order.kids}` + (xn.length ? `; доп.: ${xn.join(", ")}` : "") + `. Расчёт: ${fmt(order.total)} смн.`,
+        `Мехоҳам: ${hn.join(", ")}; ${order.hours} соат; меҳмонон: ${order.kids}` + (xn.length ? `; иловагӣ: ${xn.join(", ")}` : "") + `. Ҳисоб: ${fmt(order.total)} смн.`,
+        `I want: ${hn.join(", ")}; ${order.hours} h; guests: ${order.kids}` + (xn.length ? `; extras: ${xn.join(", ")}` : "") + `. Estimate: ${fmt(order.total)} TJS.`);
     }
     if (window.HEROES) {
       $("#f-hero").innerHTML = `<option value="" disabled selected hidden></option>` +
-        HEROES.map(h => `<option>${h.name}</option>`).join("") + `<option>Пусть решит команда</option>`;
+        HEROES.map(h => `<option value="${h.id}">${h.name}</option>`).join("") + `<option value="any">${tr("Пусть решит команда", "Бигзор даста интихоб кунад", "Let the team decide")}</option>`;
       if (order && order.heroes && order.heroes[0]) $("#f-hero").value = order.heroes[0];
     }
     const phone = $("#f-phone");
@@ -345,11 +354,12 @@
       check($("#f-hero"), !!$("#f-hero").value);
       if (!ok) return;
       const name = $("#f-name").value.trim();
+      const d = new Date(date.value).toLocaleDateString(LOC);
       modal(`
         <svg class="emblem" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#e62429" stroke-width="4"/><path d="M28 52l15 15 30-34" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <h3>Сигнал принят!</h3>
-        <p>${name}, ваша заявка улетела на хеликэрриер. Дежурный герой перезвонит в течение 15 минут, чтобы уточнить детали праздника ${new Date(date.value).toLocaleDateString("ru-RU")}.</p>
-        <button class="btn" data-close>Отлично!</button>`);
+        <h3>${tr("Сигнал принят!", "Сигнал қабул шуд!", "Signal received!")}</h3>
+        <p>${tr(`${name}, ваша заявка улетела на хеликэрриер. Дежурный герой перезвонит в течение 15 минут, чтобы уточнить детали праздника ${d}.`, `${name}, дархости шумо ба хеликэрриер парвоз кард. Қаҳрамони навбатдор дар давоми 15 дақиқа занг мезанад, то тафсилоти ҷашни ${d}-ро аниқ кунад.`, `${name}, your request is on its way to the Helicarrier. The hero on duty will call you within 15 minutes to plan your party on ${d}.`)}</p>
+        <button class="btn" data-close>${tr("Отлично!", "Олӣ!", "Awesome!")}</button>`);
       confetti();
       form.reset();
       store.del("order");
