@@ -150,3 +150,59 @@
 .g-cert .meta2 { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; font-size: 12px; color: rgba(255,255,255,.8); }
 .g-cert .stamp { position: absolute; right: 18px; top: 18px; width: 86px; height: 86px; border-radius: 50%; border: 3px solid var(--gold); display: grid; place-items: center; text-align: center; font-family: var(--font-cond); font-size: 11px; letter-spacing: .08em; color: var(--gold); transform: rotate(12deg); text-transform: uppercase; line-height: 1.2; }
 .g-name { width: 100%; margin: 14px 0 4px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(0,0,0,.35); color: #fff; font: inherit; font-size: 16px; text-align: center; }
+
+/* ---------- список камней в миссии ---------- */
+.g-stones { display: grid; grid-template-columns: 1fr; gap: 5px; margin-top: 10px; }
+.g-stone { display: flex; align-items: center; gap: 7px; padding: 6px 8px; border-radius: 10px; background: rgba(255,255,255,.04); font-size: 11.5px; min-width: 0; }
+.g-stone i { width: 10px; height: 13px; flex: none; background: var(--sc); clip-path: polygon(50% 0, 100% 35%, 80% 100%, 20% 100%, 0 35%); box-shadow: 0 0 8px var(--sc); opacity: .45; }
+.g-stone.got i { opacity: 1; }
+.g-stone span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,.8); }
+.g-stone a, .g-stone button { flex: none; color: var(--gold); font-size: 11px; background: none; border: 0; padding: 0; text-decoration: none; }
+.g-stone.got { color: #9cff6b; }
+
+/* ---------- состояние квеста в панели ---------- */
+.g-qban { margin: 12px 0 4px; padding: 12px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.85); }
+.g-qban b { font-family: var(--font-cond); letter-spacing: .06em; text-transform: uppercase; font-size: 14px; color: #fff; }
+.g-qban.run { background: rgba(46,143,31,.18); border: 1px solid rgba(156,255,107,.35); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.g-qban.wait { background: rgba(245,197,24,.1); border: 1px solid rgba(245,197,24,.35); }
+.g-qban.end { background: rgba(230,36,41,.12); border: 1px solid rgba(230,36,41,.4); }
+.g-qtime { margin-left: auto; font-family: "Consolas", monospace; font-size: 16px; color: #9cff6b; }
+.g-board:empty { display: none; }
+.g-board { margin: 10px 0 4px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.03); border: 1px solid var(--line); }
+.g-board h5 { margin: 0 0 8px; font-family: var(--font-cond); font-weight: 500; letter-spacing: .2em; text-transform: uppercase; font-size: 11px; color: var(--gold); }
+.lb-row { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; padding: 6px 4px; border-radius: 8px; font-size: 13px; }
+.lb-row .pl { font-family: var(--font-display); color: var(--muted); text-align: center; }
+.lb-row:nth-child(2) .pl { color: #ffd700; } .lb-row:nth-child(3) .pl { color: #c0c0c0; } .lb-row:nth-child(4) .pl { color: #cd7f32; }
+.lb-row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-row .nm small { color: var(--muted); margin-left: 6px; }
+.lb-row .sc { font-family: var(--font-cond); color: var(--gold); }
+.lb-row.me { background: rgba(230,36,41,.18); }
+.lb-empty { color: var(--muted); font-size: 12px; }
+
+/* ---------- полоса таймера квеста ---------- */
+.q-bar { visibility: hidden; position: fixed; left: 50%; top: calc(var(--header-h) + 8px); transform: translate(-50%, -150%); z-index: 9620; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 12px; border-radius: 999px; background: rgba(10,10,16,.92); border: 1px solid rgba(156,255,107,.45); box-shadow: 0 10px 30px rgba(0,0,0,.5); font-family: var(--font-cond); letter-spacing: .08em; text-transform: uppercase; font-size: 12px; transition: transform .5s var(--ease); cursor: pointer; }
+.q-bar.on { transform: translate(-50%, 0); visibility: visible; }
+.q-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: #9cff6b; box-shadow: 0 0 10px #9cff6b; animation: blink 1.2s steps(1) infinite; }
+.q-bar .tm { font-family: "Consolas", monospace; font-size: 15px; color: #9cff6b; letter-spacing: 0; }
+.q-bar .tm.low { color: #ff6b6b; }
+.q-bar .xp { color: var(--gold); }
+body.has-qbar .header { top: 0; }
+@media (max-width: 600px) { .q-bar { top: auto; bottom: 76px; transform: translate(-50%, 260px); } .q-bar.on { transform: translate(-50%, 0); visibility: visible; } }
+
+/* ---------- полноэкранные оверлеи квеста ---------- */
+.q-over { position: fixed; inset: 0; z-index: 9850; display: grid; place-items: center; padding: 20px; background: radial-gradient(circle, rgba(60,10,14,.92), rgba(3,3,8,.97)); opacity: 0; pointer-events: none; transition: opacity .4s; text-align: center; }
+.q-over.open { opacity: 1; pointer-events: auto; }
+.q-over .box { width: min(520px, 100%); }
+.q-over h2 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; font-size: clamp(30px, 7vw, 64px); line-height: .95; margin: 10px 0; }
+.q-over p { color: rgba(255,255,255,.8); }
+.q-over .big { font-family: var(--font-display); font-size: clamp(120px, 30vw, 260px); line-height: 1; color: var(--gold); text-shadow: 0 0 60px rgba(245,197,24,.6); animation: qPop .9s var(--ease); }
+@keyframes qPop { from { transform: scale(2.2); opacity: 0; } to { transform: none; opacity: 1; } }
+.q-over input { width: 100%; margin: 16px 0 12px; padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 20px; text-align: center; }
+.q-over .res { margin: 18px auto; padding: 16px; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid var(--line); text-align: left; }
+.q-over .me-score { font-family: var(--font-display); font-size: 54px; color: var(--gold); line-height: 1; }
+
+/* ---------- объявление ведущего ---------- */
+.q-ann { position: fixed; left: 50%; top: 84px; z-index: 9840; width: min(640px, calc(100% - 24px)); transform: translate(-50%, -30px); opacity: 0; pointer-events: none; transition: all .5s var(--ease); padding: 18px 22px 18px 64px; border-radius: 20px; background: linear-gradient(135deg, var(--red), var(--red-dark)); box-shadow: 0 30px 80px var(--glow); font-size: 17px; font-weight: 600; }
+.q-ann.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.q-ann::before { content: "📣"; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 28px; }
+.q-ann small { display: block; font-family: var(--font-cond); letter-spacing: .25em; text-transform: uppercase; font-size: 11px; font-weight: 400; opacity: .8; margin-bottom: 2px; }

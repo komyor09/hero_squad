@@ -387,7 +387,7 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-7px) rotate(-4
 @media (max-width: 1000px) { .heroes-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .heroes-row { grid-template-columns: 1fr; } }
 
-.hcard {
+.hcard { cursor: pointer;
   --c1: #a10d13; --c2: #0a1a6b;
   position: relative;
   height: 470px;
@@ -698,7 +698,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .mandala { position: absolute; left: 50%; top: 45%; width: 420px; height: 420px; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid rgba(255,153,0,.7); box-shadow: 0 0 40px rgba(255,140,0,.5), inset 0 0 40px rgba(255,140,0,.4); animation: spin 18s linear infinite; }
 .mandala::before, .mandala::after { content: ""; position: absolute; inset: 30px; border-radius: 50%; border: 2px dashed rgba(255,190,80,.8); }
 .mandala::after { inset: 70px; border-style: dotted; animation: spin 7s linear infinite reverse; }
-.agamotto { position: absolute; z-index: 3; width: 34px; height: 34px; border-radius: 50%; border: 0; background: transparent; cursor: default; }
+.agamotto { position: absolute; z-index: 3; width: 34px; height: 34px; border-radius: 50%; border: 0; background: transparent; cursor: pointer; }
 .big-num { font-family: var(--font-display); font-size: clamp(44px, 7vw, 90px); line-height: 1; color: #ffb347; text-shadow: 0 0 30px rgba(255,140,0,.6); }
 @media (max-width: 900px) { .strange-box { grid-template-columns: 1fr; padding: 30px; } .strange-box .figwrap { height: 400px; } .mandala { width: 300px; height: 300px; } }
 

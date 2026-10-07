@@ -43,7 +43,7 @@
   const STONE_HINTS = {
     space: tr("Там, где начинается праздник — рядом с первым героем главной.", "Дар ҷое, ки ҷашн оғоз мешавад — назди қаҳрамони аввали саҳифаи асосӣ.", "Where the party begins — next to the first hero on the home page."),
     mind: tr("На обороте карточки самой хитрой шпионки.", "Дар пушти корти ҷосуси аз ҳама зирак.", "On the back of the cleverest spy’s card."),
-    reality: tr("Появится, когда праздник станет по-настоящему большим (от 4 000 сомони).", "Вақте пайдо мешавад, ки ҷашн воқеан калон шавад (аз 4 000 сомонӣ).", "Appears when the party gets really big (4,000 TJS and up)."),
+    reality: tr("Появится, когда праздник станет по-настоящему большим (от 3 000 сомони).", "Вақте пайдо мешавад, ки ҷашн воқеан калон шавад (аз 3 000 сомонӣ).", "Appears when the party gets really big (3,000 TJS and up)."),
     power: tr("Спроси команду, что будет, если на праздник придёт Танос.", "Аз даста пурс: агар Танос ба ҷашн ояд, чӣ мешавад?", "Ask the team what happens if Thanos shows up."),
     time: tr("У Доктора Стрэнджа ответ висит прямо на груди.", "Ҷавоб дар синаи Доктор Стрэндж овезон аст.", "Doctor Strange wears the answer on his chest."),
     soul: tr("Вормир. Спроси того, кто всегда на связи.", "Вормир. Аз касе пурс, ки ҳамеша дар тамос аст.", "Vormir. Ask the one who’s always online.")
@@ -122,14 +122,14 @@
   bindStones();
   new MutationObserver(() => bindStones()).observe(document.body, { childList: true, subtree: true });
 
-  /* камень Реальности — появляется в калькуляторе при сумме от 4000 */
+  /* камень Реальности — появляется в калькуляторе при сумме от 3000 */
   document.addEventListener("hs:total", e => {
     const box = $(".summary");
     if (!box || has("reality") || $(".stone[data-stone=reality]", box)) return;
-    if (e.detail >= 4000) {
+    if (e.detail >= 3000) {
       const s = document.createElement("button");
       s.className = "stone"; s.dataset.stone = "reality"; s.setAttribute("aria-label", "?");
-      s.style.cssText = "right:22px;top:20px;opacity:.6";
+      s.style.cssText = "right:22px;top:20px";
       box.appendChild(s);
     }
   });
@@ -140,8 +140,9 @@
     if (has("time") || $(".stone[data-stone=time]")) return;
     const s = document.createElement("button");
     s.className = "stone"; s.dataset.stone = "time"; s.setAttribute("aria-label", "?");
-    s.style.cssText = `left:${eye.offsetLeft + 10}px;top:${eye.offsetTop - 30}px;opacity:1;transform:scale(1.6)`;
+    s.style.cssText = `left:${eye.offsetLeft + 6}px;top:${eye.offsetTop - 40}px`;
     eye.parentElement.appendChild(s);
+    eye.classList.add("opened");
     toast(tr("Око Агамотто", "Чашми Агамотто", "Eye of Agamotto"), tr("Оно открылось… что-то зелёное блеснуло", "Он кушода шуд… чизе сабз дурахшид", "It opened… something green glinted"), "◉");
   });
 
@@ -176,6 +177,8 @@
     const tag = (e.target.tagName || "").toLowerCase();
     if (["input", "textarea", "select"].includes(tag)) return;
     if (e.code === "Backquote") { e.preventDefault(); return toggleJarvis(); }
+    // терминал открыт, а фокус потерялся — отправляем ввод в терминал
+    if (jv.classList.contains("open") && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { jin.focus(); return; }
     if (e.key === "Escape") { if (document.documentElement.classList.contains("stark")) toggleStark(false); closeJarvis(); }
     const m = /^Key([A-Z])$/.exec(e.code);
     if (!m) return;
@@ -203,7 +206,9 @@
   }
   function openJarvis() {
     jv.classList.add("open");
-    setTimeout(() => jin.focus(), 300);
+    jin.focus({ preventScroll: true });
+    setTimeout(() => jin.focus({ preventScroll: true }), 300);
+    setTimeout(() => { if (document.activeElement !== jin) jin.focus({ preventScroll: true }); }, 700);
     if (!log.children.length) {
       const h = new Date().getHours();
       const hi = h < 6 ? tr("Доброй ночи", "Шаб ба хайр", "Good night") : h < 12 ? tr("Доброе утро", "Субҳ ба хайр", "Good morning") : h < 18 ? tr("Добрый день", "Рӯз ба хайр", "Good afternoon") : tr("Добрый вечер", "Шом ба хайр", "Good evening");
@@ -261,6 +266,7 @@
     iamironman: () => { toggleStark(true); closeJarvis(); return tr("Я — Железный человек.", "Ман — Одами оҳанин.", "I am Iron Man."); },
     reset: () => { found = []; store.set("ach", []); document.dispatchEvent(new CustomEvent("hs:ach", { detail: null })); renderGauntlet(); $$(".stone.taken").forEach(s => s.classList.remove("taken")); return { t: tr("Прогресс сброшен.", "Пешрафт тоза шуд.", "Progress reset."), c: "w" }; },
     promo: () => tr("Промокоды не выдаются. Их зарабатывают подвигами.", "Промокод дода намешавад. Онро бо корнамоӣ ба даст меоранд.", "Promo codes aren’t handed out. They are earned through heroics."),
+    admin: () => { setTimeout(() => location.href = ROOT + "admin.html", 400); return tr("Открываю штаб администратора…", "Ситоди админро мекушоям…", "Opening admin HQ…"); },
     marvel: () => tr("Этот сайт — учебный проект и не связан с Marvel. Но мы фанаты.", "Ин сайт лоиҳаи таълимӣ аст ва ба Marvel алоқа надорад. Вале мо мухлисонем.", "This site is a student project, not affiliated with Marvel. But we are fans."),
     salom: () => tr("И вам салом!", "Ва алейкум ассалом!", "Salom to you too!"),
     "42": () => tr("Это из другой вселенной.", "Ин аз олами дигар аст.", "Wrong universe.")

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Штаб администратора — Hero Squad</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 2 43 12v24L24 46 5 36V12z' fill='%23e62429'/%3E%3Cpath d='M27 9 15 27h8l-3 12 13-19h-8z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Russo+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=7">
+  <link rel="stylesheet" href="assets/css/admin.css?v=7">
+</head>
+<body class="adm" data-page="admin" data-root="">
+
+<!-- ================= ВХОД ================= -->
+<section class="a-login" id="login" hidden>
+  <form class="a-card a-login-box" id="login-form" novalidate>
+    <div class="a-brand">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2 43 12v24L24 46 5 36V12z" fill="#e62429" stroke="#fff" stroke-width="2"/><path d="M27 9 15 27h8l-3 12 13-19h-8z" fill="#fff"/></svg>
+      <div><b>HERO SQUAD</b><small>штаб администратора</small></div>
+    </div>
+    <span class="a-mode" data-mode></span>
+    <label class="a-field"><span>E-mail</span><input type="email" id="l-email" autocomplete="username" placeholder="admin@example.com"></label>
+    <label class="a-field"><span>Пароль</span><input type="password" id="l-pass" autocomplete="current-password" placeholder="••••••••"></label>
+    <div class="a-err" id="l-err" role="alert"></div>
+    <button class="btn" type="submit">Войти</button>
+    <p class="a-note" id="l-note"></p>
+    <a class="a-back" href="index.html">← на сайт</a>
+  </form>
+</section>
+
+<!-- ================= ПРИЛОЖЕНИЕ ================= -->
+<div class="a-app" id="app" hidden>
+  <header class="a-top">
+    <div class="a-brand">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2 43 12v24L24 46 5 36V12z" fill="#e62429" stroke="#fff" stroke-width="2"/><path d="M27 9 15 27h8l-3 12 13-19h-8z" fill="#fff"/></svg>
+      <div><b>HERO SQUAD</b><small>штаб администратора</small></div>
+    </div>
+    <nav class="a-tabs" role="tablist">
+      <button role="tab" data-tab="quest" class="on">🎯 Квест</button>
+      <button role="tab" data-tab="leaders">🏆 Лидеры <span class="a-pill" id="cnt-players">0</span></button>
+      <button role="tab" data-tab="bookings">📨 Заявки <span class="a-pill red" id="cnt-new">0</span></button>
+      <button role="tab" data-tab="heroes">🦸 Герои</button>
+    </nav>
+    <div class="a-user">
+      <span class="a-mode" data-mode></span>
+      <span id="u-email"></span>
+      <a class="a-btn ghost" href="index.html" target="_blank" rel="noopener">Сайт ↗</a>
+      <button class="a-btn ghost" id="logout">Выйти</button>
+    </div>
+  </header>
+
+  <main class="a-main">
+    <!-- ---------- КВЕСТ ---------- -->
+    <section class="a-panel on" data-panel="quest">
+      <div class="a-grid">
+        <div class="a-card a-status">
+          <span class="a-label">Состояние квеста</span>
+          <div class="a-state" id="q-state">—</div>
+          <div class="a-timer" id="q-timer">--:--</div>
+          <div class="a-sub" id="q-sub"></div>
+          <div class="a-kpis">
+            <div><b id="k-players">0</b><span>игроков в раунде</span></div>
+            <div><b id="k-avg">0</b><span>средний XP</span></div>
+            <div><b id="k-stones">0</b><span>собрали все камни</span></div>
+          </div>
+        </div>
+
+        <div class="a-card">
+          <span class="a-label">Управление</span>
+          <div class="a-row">
+            <label class="a-field sm"><span>Длительность</span>
+              <select id="q-dur">
+                <option value="5">5 минут</option><option value="10">10 минут</option><option value="15" selected>15 минут</option>
+                <option value="20">20 минут</option><option value="30">30 минут</option><option value="0">Без ограничения</option>
+              </select>
+            </label>
+            <label class="a-check"><input type="checkbox" id="q-clear" checked> очистить таблицу лидеров</label>
+          </div>
+          <div class="a-actions">
+            <button class="a-btn go big" id="q-start">▶ Начать новый раунд</button>
+            <button class="a-btn" id="q-stop">⏹ Завершить раунд</button>
+            <button class="a-btn" id="q-plus">+5 мин</button>
+            <button class="a-btn" id="q-wait">🔒 Режим ожидания</button>
+            <button class="a-btn ghost" id="q-free">🔓 Свободный режим</button>
+          </div>
+          <p class="a-note">«Начать» — у всех открытых сайтов появится окно ввода имени и отсчёт 3-2-1, прогресс игроков обнуляется.
+            «Режим ожидания» — миссии заблокированы, пока вы не нажмёте «Начать». «Свободный режим» — квест выключен, миссии работают как обычно.</p>
+        </div>
+
+        <div class="a-card">
+          <span class="a-label">Объявление на все экраны</span>
+          <div class="a-row">
+            <input class="a-input" id="ann-text" maxlength="140" placeholder="Например: Осталась 1 минута!">
+            <button class="a-btn go" id="ann-send">Отправить</button>
+          </div>
+          <div class="a-chips">
+            <button data-ann="Осталась 1 минута! ⏱">Осталась 1 минута!</button>
+            <button data-ann="Подсказка: нажмите на реактор внизу сайта ⚡">Подсказка: реактор</button>
+            <button data-ann="Кто первым соберёт все 6 камней? 💎">Камни</button>
+            <button data-ann="Загляните в «Миссии» — там подсказки 🎯">Миссии</button>
+          </div>
+        </div>
+
+        <div class="a-card a-qr">
+          <span class="a-label">QR для участников</span>
+          <img src="assets/qr/ru-index.svg" alt="QR-код сайта">
+          <code>komyor09.github.io/hero_squad</code>
+          <button class="a-btn go" id="open-proj">📺 Режим проектора</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ЛИДЕРЫ ---------- -->
+    <section class="a-panel" data-panel="leaders">
+      <div class="a-card">
+        <div class="a-head">
+          <span class="a-label">Таблица лидеров</span>
+          <div class="a-actions">
+            <select id="lb-scope" class="a-input sm"><option value="round">Текущий раунд</option><option value="all">Все игроки</option></select>
+            <button class="a-btn go" id="open-proj2">📺 Проектор</button>
+            <button class="a-btn danger" id="lb-clear">Очистить</button>
+          </div>
+        </div>
+        <div class="a-tablewrap"><table class="a-table" id="lb-table">
+          <thead><tr><th>#</th><th>Имя</th><th>XP</th><th>Миссии</th><th>Камни</th><th>Звание</th><th>Язык</th><th>Раунд</th><th>Обновлено</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ---------- ЗАЯВКИ ---------- -->
+    <section class="a-panel" data-panel="bookings">
+      <div class="a-card">
+        <div class="a-head">
+          <span class="a-label">Заявки с сайта</span>
+          <div class="a-actions">
+            <select id="bk-filter" class="a-input sm"><option value="">Все</option><option value="new">Новые</option><option value="work">В работе</option><option value="done">Выполнены</option></select>
+            <button class="a-btn" id="bk-csv">⬇ CSV</button>
+          </div>
+        </div>
+        <div class="a-tablewrap"><table class="a-table" id="bk-table">
+          <thead><tr><th>Получена</th><th>Имя</th><th>Телефон</th><th>Герой</th><th>Дата праздника</th><th>Пожелания</th><th>Язык</th><th>Статус</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ---------- ГЕРОИ ---------- -->
+    <section class="a-panel" data-panel="heroes">
+      <div class="a-head" style="margin-bottom:16px">
+        <span class="a-label">Герои, цены и описания</span>
+        <p class="a-note" style="margin:0">Изменения сразу появляются на всех страницах сайта (каталог, калькулятор, форма). Пустое поле — значение по умолчанию.</p>
+      </div>
+      <div class="a-heroes" id="heroes-admin"></div>
+    </section>
+  </main>
+</div>
+
+<!-- ================= ПРОЕКТОР ================= -->
+<div class="a-proj" id="proj" hidden>
+  <button class="a-proj-x" id="proj-close" aria-label="Закрыть">×</button>
+  <div class="a-proj-left">
+    <span class="eyebrow" style="color:var(--gold)">Hero Squad · квест</span>
+    <h1>Охота<br>за камнями</h1>
+    <div class="a-proj-timer" id="p-timer">--:--</div>
+    <div class="a-proj-state" id="p-state"></div>
+    <div class="a-proj-qr"><img src="assets/qr/ru-index.svg" alt="QR"><span>Сканируй<br>и играй</span></div>
+  </div>
+  <div class="a-proj-right"><h2>🏆 Лидеры</h2><ol id="p-list"></ol></div>
+</div>
+
+<div class="a-toast" id="a-toast"></div>
+
+<script src="assets/js/data.js?v=7"></script>
+<script src="assets/js/firebase-config.js?v=7"></script>
+<script src="assets/js/db.js?v=7"></script>
+<script src="assets/js/admin.js?v=7"></script>
+</body>
+</html>

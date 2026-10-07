@@ -30,6 +30,7 @@
 
   function mark(id, silent) {
     if (done[id]) return;
+    if (quest && !quest.running) return;           // квест на паузе — задания не засчитываются
     done[id] = Date.now(); store.set("mdone", done);
     const m = MISSIONS.find(x => x.id === id);
     if (m && !silent) toast(T("Миссия выполнена", "Миссия иҷро шуд", "Mission complete") + ` · +${m.xp} XP`, m.title, "✓");
@@ -164,8 +165,39 @@
   document.body.appendChild(panel);
   const body = $(".g-body", panel);
 
+  /* где искать каждый камень */
+  const STONE_WHERE = {
+    space: ["index.html", T("Главная", "Асосӣ", "Home")],
+    mind: ["heroes.html", T("Герои", "Қаҳрамонон", "Heroes")],
+    reality: ["services.html#calc", T("Услуги", "Хизматҳо", "Services")],
+    power: ["contacts.html", T("Контакты", "Тамос", "Contacts")],
+    time: ["about.html", T("О нас", "Дар бораи мо", "About")],
+    soul: [null, "J.A.R.V.I.S."]
+  };
+  function stonesList() {
+    const ST = S.STONES || {};
+    return `<div class="g-stones">${Object.keys(STONE_WHERE).map(k => {
+      const got = S.has(k), [href, label] = STONE_WHERE[k];
+      const nm = S.ACH && S.ACH[k] ? S.ACH[k].n : k;
+      const tip = S.STONE_HINTS ? S.STONE_HINTS[k] : "";
+      const to = got ? "✓" : href ? `<a href="${href}">${label} →</a>` : `<button data-jarvis>${label}</button>`;
+      return `<div class="g-stone ${got ? "got" : ""}" title="${tip.replace(/"/g, "&quot;")}"><i style="--sc:${ST[k] || "#fff"}"></i><span>${nm}</span>${to}</div>`;
+    }).join("")}</div>`;
+  }
+
+  /* состояние общего квеста (приходит из live.js) */
+  let quest = null, boardHTML = "", qTimer = "";
+  const questLocked = () => !!(quest && !quest.running);
+  function questBanner() {
+    if (!quest) return "";
+    if (quest.running) return `<div class="g-qban run"><b>🟢 ${T("Квест идёт", "Квест идома дорад", "Quest is live")}</b> · ${T("раунд", "давр", "round")} ${quest.round}<span class="g-qtime">${qTimer}</span></div>`;
+    if (quest.finished) return `<div class="g-qban end"><b>🏁 ${T("Раунд завершён", "Давр ба охир расид", "Round finished")}</b><br>${T("Итоги — в таблице ниже. Ждите следующего старта.", "Натиҷаҳо — дар ҷадвали поён. Оғози навбатиро интизор шавед.", "Results are below. Wait for the next start.")}</div>`;
+    return `<div class="g-qban wait"><b>⏳ ${T("Квест ещё не начался", "Квест ҳанӯз оғоз нашудааст", "Quest hasn’t started yet")}</b><br>${T("Ведущий запустит его из админки — у всех стартует одновременно.", "Пешбар онро аз админка оғоз мекунад — барои ҳама якбора.", "The host will start it from the admin panel — for everyone at once.")}</div>`;
+  }
+
   function render() {
-    let html = "";
+    let html = questBanner() + (quest ? `<div class="g-board">${boardHTML}</div>` : "");
+    if (questLocked()) { body.innerHTML = html; return; }
     [1, 2, 3, 4].forEach(ch => {
       const list = MISSIONS.filter(m => m.ch === ch);
       const n = list.filter(isDone).length;
@@ -177,6 +209,7 @@
         html += `<div class="g-m ${ok ? "done" : ""}" data-id="${m.id}">
           <span class="chk">${ok ? "✓" : m.ch === 3 ? "?" : m.ch === 4 ? "◆" : "•"}</span>
           <div><div class="t">${m.title}${cnt}</div><div class="d">${m.desc}</div>
+            ${m.id === "stones" ? stonesList() : ""}
             ${ok ? "" : `<div class="tools"><button data-hint>${T("Подсказка", "Маслиҳат", "Hint")}</button>${link}</div><div class="g-hint">💡 ${m.hint}</div>`}
           </div>
           <span class="xp">+${m.xp} XP</span>
@@ -189,6 +222,7 @@
   body.addEventListener("click", e => {
     const h = e.target.closest("[data-hint]");
     if (h) h.closest(".g-m").classList.toggle("show-hint");
+    if (e.target.closest("[data-jarvis]") && S.openJarvis) { closePanel(); S.openJarvis(); }
   });
 
   let lastRank = store.get("rank", 0);
@@ -197,7 +231,7 @@
     const r = rankOf(xp);
     const nextR = RANKS.find(x => x[0] > xp);
     const doneN = MISSIONS.filter(isDone).length;
-    $(".g-badge", dock).textContent = `${doneN}/${MISSIONS.length}`;
+    $(".g-badge", dock).textContent = questLocked() ? "🔒" : `${doneN}/${MISSIONS.length}`;
     $(".emb", panel).textContent = r[1];
     $(".g-rank b", panel).textContent = r[2];
     $(".g-rank small", panel).textContent = nextR
@@ -213,7 +247,15 @@
     }
     if (pulse) { const f = $('[data-g="missions"]', dock); f.classList.remove("pulse"); void f.offsetWidth; f.classList.add("pulse"); }
     if (doneN === MISSIONS.length && !store.get("certShown", false)) { store.set("certShown", true); setTimeout(certificate, 1500); }
+    document.dispatchEvent(new CustomEvent("hs:progress", { detail: stats() }));
   }
+  function stats() {
+    const xp = xpNow();
+    return { xp, done: MISSIONS.filter(isDone).length, total: MISSIONS.length,
+      stones: ["space", "mind", "reality", "power", "time", "soul"].filter(S.has).length, rank: rankOf(xp)[2] };
+  }
+  const PROGRESS_KEYS = ["mdone", "pages", "ach", "rank", "certShown", "wakanda", "tour"];
+  function resetProgress() { PROGRESS_KEYS.forEach(k => store.del(k)); }
 
   function openPanel() { render(); panel.classList.add("open"); }
   function closePanel() { panel.classList.remove("open"); }
@@ -227,7 +269,7 @@
     if (g === "tour") { closePanel(); startTour(); }
     if (g === "reset") {
       if (!b.classList.contains("warn")) { b.classList.add("warn"); b.textContent = T("Точно сбросить? Нажми ещё раз", "Боварӣ доред? Боз пахш кунед", "Sure? Click again"); return; }
-      ["mdone", "pages", "ach", "rank", "certShown", "wakanda"].forEach(k => store.del(k));
+      resetProgress();
       location.reload();
     }
   });
@@ -419,5 +461,11 @@
     inp.addEventListener("input", () => { $(".g-cert .nm", m).textContent = inp.value.trim() || T("Агент", "Агент", "Agent"); });
     HS.confetti && HS.confetti();
   }
-  window.HGuide = { openPanel, openQR, startTour, certificate };
+  window.HGuide = {
+    openPanel, closePanel, openQR, startTour, certificate, stats, resetProgress,
+    setQuest(q) { quest = q; refresh(false); render(); },
+    setBoard(html) { boardHTML = html; const b = $(".g-board", panel); if (b) b.innerHTML = html; },
+    setTimer(txt) { qTimer = txt; const t = $(".g-qtime", panel); if (t) t.textContent = txt; },
+    isLocked: questLocked
+  };
 })();

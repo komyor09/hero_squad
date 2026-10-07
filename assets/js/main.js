@@ -202,7 +202,8 @@
     observe();
     $$(".hcard", container).forEach(card => {
       card.addEventListener("click", e => {
-        if (e.target.closest(".flip-btn")) { card.classList.toggle("flipped"); act("flip", card.dataset.id); }
+        // переворот: кнопка или клик в любом месте карточки (кроме ссылок, кнопок и камней)
+        if (e.target.closest(".flip-btn") || !e.target.closest("a, button, .stone")) { card.classList.toggle("flipped"); act("flip", card.dataset.id); }
       });
       // 3D-наклон за мышью
       card.addEventListener("mousemove", e => {
@@ -226,18 +227,32 @@
     if (card && card.classList.contains("flipped")) $(".hcard-inner", card).style.transform = "";
   });
 
+  // герои могут быть отключены/изменены из админки (событие hs:heroes)
+  const visibleHeroes = () => (window.HEROES || []).filter(h => h.enabled !== false);
+  window.HS.visibleHeroes = visibleHeroes;
   const allGrid = $("#heroes-grid");
+  let curFilter = "all";
+  function applyFilter() { $$(".hcard", allGrid).forEach(c => c.classList.toggle("hidden-card", curFilter !== "all" && c.dataset.role !== curFilter)); }
   if (allGrid && window.HEROES) {
-    mountCards(allGrid, HEROES);
+    mountCards(allGrid, visibleHeroes());
     $$(".filters button").forEach(b => b.addEventListener("click", () => {
       $$(".filters button").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
-      const f = b.dataset.f; act("filter", f);
-      $$(".hcard", allGrid).forEach(c => c.classList.toggle("hidden-card", f !== "all" && c.dataset.role !== f));
+      curFilter = b.dataset.f; act("filter", curFilter);
+      applyFilter();
     }));
   }
   const previewGrid = $("#heroes-preview");
-  if (previewGrid && window.HEROES) mountCards(previewGrid, HEROES.filter(h => ["spider", "iron", "panther", "doom"].includes(h.id)));
+  const previewList = () => {
+    const pref = ["spider", "iron", "panther", "doom"];
+    const v = visibleHeroes();
+    return v.filter(h => pref.includes(h.id)).concat(v.filter(h => !pref.includes(h.id))).slice(0, 4);
+  };
+  if (previewGrid && window.HEROES) mountCards(previewGrid, previewList());
+  document.addEventListener("hs:heroes", () => {
+    if (allGrid) { mountCards(allGrid, visibleHeroes()); applyFilter(); $$(".hcard", allGrid).forEach(c => c.classList.add("in")); }
+    if (previewGrid) { mountCards(previewGrid, previewList()); $$(".hcard", previewGrid).forEach(c => c.classList.add("in")); }
+  });
 
   /* ---------- подсветка карточек услуг за курсором ---------- */
   $$(".svc").forEach(s => s.addEventListener("mousemove", e => {
@@ -251,16 +266,24 @@
   if (calc && window.HEROES) {
     const picks = $("#pick-heroes");
     const preset = store.get("picked", []);
-    picks.innerHTML = HEROES.map(h => `
+    const pickHTML = (h, on) => `
       <label class="pick" style="--c1:${h.c1};--c2:${h.c2}">
         <input type="checkbox" name="hero" value="${h.id}" ${preset.includes(h.id) ? "checked" : ""}>
         <span class="box">
           <span class="thumb"><img src="${IMG + h.img}" alt="" class="${h.cover ? "cover" : ""}"></span>
           <span class="lbl">${h.name}<small>${h.price} ${perHour}</small></span>
         </span>
-      </label>`).join("");
-    if (!preset.length) $("input[value=spider]", picks).checked = true;
+      </label>`;
+    picks.innerHTML = visibleHeroes().map(h => pickHTML(h)).join("");
+    const firstPick = $("input[name=hero]", picks);
+    if (!preset.length && firstPick) ($("input[value=spider]", picks) || firstPick).checked = true;
     store.del("picked");
+    document.addEventListener("hs:heroes", () => {
+      const was = $$("input[name=hero]:checked", picks).map(i => i.value);
+      picks.innerHTML = visibleHeroes().map(h => pickHTML(h)).join("");
+      $$("input[name=hero]", picks).forEach(i => { i.checked = was.includes(i.value); });
+      recalc();
+    });
 
     $("#pick-extras").innerHTML = EXTRAS.map(x =>
       `<label class="chip"><input type="checkbox" name="extra" value="${x.id}"><span>${x.name} · ${x.price}</span></label>`).join("");
@@ -278,7 +301,7 @@
     function fill(r) { const p = (r.value - r.min) / (r.max - r.min) * 100; r.style.setProperty("--fill", p + "%"); }
 
     function recalc() {
-      const chosen = $$("input[name=hero]:checked", calc).map(i => HEROES.find(h => h.id === i.value));
+      const chosen = $$("input[name=hero]:checked", calc).map(i => HEROES.find(h => h.id === i.value)).filter(Boolean);
       const ex = $$("input[name=extra]:checked", calc).map(i => EXTRAS.find(x => x.id === i.value));
       const hr = +hours.value, kd = +kids.value;
       $("#hours-out").textContent = hr + " " + H;
@@ -330,10 +353,16 @@
         `Мехоҳам: ${hn.join(", ")}; ${order.hours} соат; меҳмонон: ${order.kids}` + (xn.length ? `; иловагӣ: ${xn.join(", ")}` : "") + `. Ҳисоб: ${fmt(order.total)} смн.`,
         `I want: ${hn.join(", ")}; ${order.hours} h; guests: ${order.kids}` + (xn.length ? `; extras: ${xn.join(", ")}` : "") + `. Estimate: ${fmt(order.total)} TJS.`);
     }
-    if (window.HEROES) {
+    function heroOptions() {
+      const cur = $("#f-hero").value;
       $("#f-hero").innerHTML = `<option value="" disabled selected hidden></option>` +
-        HEROES.map(h => `<option value="${h.id}">${h.name}</option>`).join("") + `<option value="any">${tr("Пусть решит команда", "Бигзор даста интихоб кунад", "Let the team decide")}</option>`;
+        visibleHeroes().map(h => `<option value="${h.id}">${h.name}</option>`).join("") + `<option value="any">${tr("Пусть решит команда", "Бигзор даста интихоб кунад", "Let the team decide")}</option>`;
+      if (cur) $("#f-hero").value = cur;
+    }
+    if (window.HEROES) {
+      heroOptions();
       if (order && order.heroes && order.heroes[0]) $("#f-hero").value = order.heroes[0];
+      document.addEventListener("hs:heroes", heroOptions);
     }
     const phone = $("#f-phone");
     phone.addEventListener("input", () => {
@@ -364,7 +393,8 @@
         <p>${tr(`${name}, ваша заявка улетела на хеликэрриер. Дежурный герой перезвонит в течение 15 минут, чтобы уточнить детали праздника ${d}.`, `${name}, дархости шумо ба хеликэрриер парвоз кард. Қаҳрамони навбатдор дар давоми 15 дақиқа занг мезанад, то тафсилоти ҷашни ${d}-ро аниқ кунад.`, `${name}, your request is on its way to the Helicarrier. The hero on duty will call you within 15 minutes to plan your party on ${d}.`)}</p>
         <button class="btn" data-close>${tr("Отлично!", "Олӣ!", "Awesome!")}</button>`);
       confetti();
-      act("book");
+      const heroSel = $("#f-hero");
+      act("book", { name, phone: phone.value, date: date.value, hero: heroSel.value, heroName: heroSel.options[heroSel.selectedIndex] ? heroSel.options[heroSel.selectedIndex].text : "", msg: $("#f-msg").value.trim(), lang: window.LANG });
       form.reset();
       store.del("order");
     });

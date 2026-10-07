@@ -1,0 +1,35 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "quest": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'komyor09@gmail.com'"
+    },
+    "announce": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'komyor09@gmail.com'"
+    },
+    "heroes": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'komyor09@gmail.com'"
+    },
+    "players": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email == 'komyor09@gmail.com'",
+      "$uid": {
+        ".write": "auth != null && auth.uid == $uid",
+        ".validate": "newData.hasChildren(['name', 'xp', 'round']) && newData.child('name').isString() && newData.child('name').val().length <= 24 && newData.child('xp').isNumber() && newData.child('xp').val() >= 0 && newData.child('xp').val() <= 2000"
+      }
+    },
+    "bookings": {
+      ".read": "auth != null && auth.token.email == 'komyor09@gmail.com'",
+      ".write": "auth != null && auth.token.email == 'komyor09@gmail.com'",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['name', 'phone', 'createdAt']) && newData.child('name').isString() && newData.child('name').val().length <= 60 && (!newData.child('msg').exists() || newData.child('msg').val().length <= 600)"
+      }
+    }
+  }
+}
