@@ -1,0 +1,6 @@
+# Only needed for tooling and tests — the website itself has no build step or dependencies.
+playwright>=1.40      # end-to-end tests (then: python -m playwright install chromium)
+segno>=1.6            # tools/make_qr.py
+pillow>=10            # tools/cutout.py
+numpy>=1.26
+scipy>=1.11

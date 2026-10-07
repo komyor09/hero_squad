@@ -1,0 +1,21 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Python tooling
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Playwright / test output
+test-results/
+playwright-report/
+
+# Personal coursework files (report for the university, not part of the site)
+*.docx
+*.doc
+~$*

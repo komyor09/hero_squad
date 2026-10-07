@@ -10,21 +10,24 @@
    1. Создайте проект на https://console.firebase.google.com
    2. Добавьте веб-приложение (значок </>) и скопируйте объект
       firebaseConfig сюда вместо null.
-   Подробная инструкция — в файле FIREBASE_SETUP.md
+   Подробная инструкция — в файле docs/FIREBASE_SETUP.md
    ========================================================= */
 
+window.FIREBASE_CONFIG = null;
+/* пример:
 window.FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCzpQfdrep_i5gYi7oOMv037d_G56DUAXk",
-  authDomain: "squad-hero-c985c.firebaseapp.com",
-  projectId: "squad-hero-c985c",
-  storageBucket: "squad-hero-c985c.firebasestorage.app",
-  messagingSenderId: "84796389098",
-  appId: "1:84796389098:web:d5462ece08cf7d6989c993",
-  measurementId: "G-RBD0WNE21Z"
+  apiKey: "AIza...",
+  authDomain: "hero-squad-xxxx.firebaseapp.com",
+  databaseURL: "https://hero-squad-xxxx-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "hero-squad-xxxx",
+  storageBucket: "hero-squad-xxxx.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef"
 };
+*/
 
 /* e-mail администраторов (тот же, что вы создадите в Firebase → Authentication) */
-window.HS_ADMIN_EMAILS = ["komyor09@gmail.com"];
+window.HS_ADMIN_EMAILS = ["admin@example.com"];
 
 /* пароль входа в админку в демо-режиме (без Firebase) */
-window.HS_DEMO_PASSWORD = "avengers#2006";
+window.HS_DEMO_PASSWORD = "avengers";

@@ -30,7 +30,7 @@
     });
     $("#l-note").innerHTML = DB.mode === "firebase"
       ? "Вход по e-mail и паролю администратора из Firebase → Authentication."
-      : `Firebase ещё не подключён — работает демо-режим. Пароль: <b>${esc(window.HS_DEMO_PASSWORD || "avengers")}</b> (меняется в <code>firebase-config.js</code>). Как подключить настоящую базу — в файле FIREBASE_SETUP.md.`;
+      : `Firebase ещё не подключён — работает демо-режим. Пароль: <b>${esc(window.HS_DEMO_PASSWORD || "avengers")}</b> (меняется в <code>firebase-config.js</code>). Как подключить настоящую базу — в файле docs/FIREBASE_SETUP.md.`;
     DB.admin.onChange(user => user ? showApp(user) : showLogin());
   }).catch(fail);
 
